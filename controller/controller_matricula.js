@@ -15,34 +15,34 @@ const { request } = require('express')
 
 
 const inserirMatricula = async function (dadosMatricula) {
+    console.log('teste');
     if (dadosMatricula.numero == '' || dadosMatricula.numero == undefined || dadosMatricula.numero > 20 ||
         dadosMatricula.id_aluno == '' || dadosMatricula.id_aluno == undefined ||
         dadosMatricula.id_turma == '' || dadosMatricula.id_turma == undefined ||
-        dadosMatricula.id_usuario == '' || dadosMatricula.id_usuario == undefined
+        dadosMatricula.id_usuario == '' || dadosMatricula.id_usuario == undefined 
+       
     ) {
         return message.ERROR_REQUIRED_FIELDS
+        
     } else {
-        //Envia os dados para a model inserir no banco de dados
+
         let resultDadosMatricula = await matriculaDAO.insertMatricula(dadosMatricula)
 
-        //Valida se o banco de dados inseriu corretamente os dados
         if (resultDadosMatricula) {
-
             let novaMatricula = await matriculaDAO.selectLastId()
 
             let dadosMatriculaJSON = {}
             dadosMatriculaJSON.status = message.SUCESS_CREATED_ITEM.status
-            dadosMatriculaJSON.matriculas = novaMatricula
+            dadosMatriculaJSON.matricula = novaMatricula
 
             return dadosMatriculaJSON
-        }
-        else {
+        } else {
             return message.ERROR_INTERNAL_SERVER
         }
-
     }
-
 }
+
+
 
 const atualizarMatricula = async function (dadosMatricula, idMatricula) {
 

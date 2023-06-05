@@ -34,11 +34,145 @@ app.use((request, response, next) => {
 const bodyParserJSON = bodyParser.json();
 
 //Import das controllers
+var controllerTipoUsuario = require('./controller/controller_tipoUsuario.js');
+var controllerUsuario = require('./controller/controller_usuario.js');
 var controllerMatricula = require('./controller/controller_matricula.js');
 var controllerAluno = require('./controller/controller_aluno.js');
 var controllerMateria = require('./controller/controller_materia.js');
+var controllerCurso = require('./controller/controller_curso.js')
+var controllerTurma = require('./controller/controller_turma.js');
 
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////Tipo_Usuario//////////////////////////////////////////////
+
+
+/********************************
+* Objetivo : API de controle de TIPO_USUARIO
+* Data : 25/05/2023
+********************************/
+
+
+//EndPoint: Post - Insere um TIPO de usuario
+app.post('/v1/mecanica/tipo/usuario', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerTipoUsuario.inserirTipoUsuario(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+
+//EndPoint: Get - Retorna todos os tipos de usuario
+app.get('/v1/mecanica/tipos', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerTipoUsuario.getTipoUsuario();
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+/////////////////////////////////////////Usuario//////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de Usuario
+* Data : 04/06/2023
+********************************/
+//EndPoint: Post - Insere um  usuario
+app.post('/v1/mecanica/usuario', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerUsuario.inserirUsuario(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Get - Retorna todos os usuario
+app.get('/v1/mecanica/usuarios', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerUsuario.getUsuario()
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+//EndPoint: Exclui um usuario existente, filtrando pelo ID
+app.delete('/v1/mecanica/usuario/:id', cors(), bodyParserJSON, async function (request, response) {
+    
+    let idUsuario = request.params.id;
+
+    let resultDadosUsuario = await controllerUsuario.deletarUsuario(idUsuario)
+
+    if (resultDadosUsuario) {
+       response.json(resultDadosUsuario);
+       response.status(200);
+   } else {
+       response.json();
+       response.status(404);
+   }
+});
+
+//EndPoint: Atualiza usuario pelo id
+app.put('/v1/mecanica/usuario/:id', cors(), bodyParserJSON, async function (request, response) {
+    //reccebe o content-type da requisicao
+    let contentType = request.headers['content-type'];
+
+
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+   let idUsuario = request.params.id;
+
+   let dadosBody = request.body;
+
+   //Encaminha os dados para a controller
+   let resultDadosUsuario = await controllerUsuario.atualizarUsuario(dadosBody, idUsuario);
+
+   response.status(resultDadosUsuario.status)
+   response.json(resultDadosUsuario)
+
+} else {
+   response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+   response.json(message.ERROR_INVALID_CONTENT_TYPE)
+}
+
+});
+
+//EndPoint: Retorna o usuario pelo id
+app.get('/v1/mecanica/usuario/id/:id', cors(), bodyParserJSON, async function(request, response) {
+
+    let id = request.params.id
+
+    let dados = await controllerUsuario.getUsuarioPorID(id)
+
+    response.status(dados.status)
+    response.json(dados)
+})
+
+
+/////////////////////////////////////// Aluno ////////////////////////////////////////////
 
 /********************************
 * Objetivo : API de controle de Aluno
@@ -141,27 +275,27 @@ app.get('/v1/mecanica/aluno', cors(), async function (request, response) {
 * Objetivo : API de controle de Matricula
 * Data : 04/06/2023
 ********************************/
-
-//EndPoint: Post - Insere uma matricula
+//Insere nova matricula - NAO FUNCIONA 
 app.post('/v1/mecanica/matricula', cors(), bodyParserJSON, async function (request, response) {
 
     let contentType = request.headers['content-type']
 
     if (String(contentType).toLowerCase() == 'application/json') {
+        //Recebe os dados encaminhados na requisição
         let dadosBody = request.body
 
-        let resulDados = await controllerMatricula.inserirMatricula(dadosBody)
+        let resultDadosMatricula = await controllerMatricula.inserirMatricula(dadosBody);
 
-        response.status(resulDados.status)
-        response.json(resulDados)
+        response.status(resultDadosMatricula.status)
+        response.json(resultDadosMatricula)
+       
     } else {
         response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
         response.json(message.ERROR_INVALID_CONTENT_TYPE)
     }
 
 });
-
-//EndPoint: Get - Retorna todas matricula
+//EndPoint: Get - Retorna todas matricula - ESSE FUNCIONA
 app.get('/v1/mecanica/matriculas', cors(), async function (request, response) {
 
     //Recebe os dados da controller
@@ -172,7 +306,7 @@ app.get('/v1/mecanica/matriculas', cors(), async function (request, response) {
 
 });
 
-//EndPoint: Retorna a matricula pelo id
+//EndPoint: Retorna a matricula pelo id - ESSE FUNCIONA
 app.get('/v1/mecanica/matricula/id/:id', cors(), bodyParserJSON, async function(request, response) {
 
     let id = request.params.id
@@ -183,7 +317,7 @@ app.get('/v1/mecanica/matricula/id/:id', cors(), bodyParserJSON, async function(
     response.json(dados)
 })
 
-//EndPoint: Exclui um usuario existente, filtrando pelo ID
+//EndPoint: Exclui um usuario existente, filtrando pelo ID - ESSE FUNCIONA
 app.delete('/v1/mecanica/matricula/:id', cors(), bodyParserJSON, async function (request, response) {
     
     let idMatricula = request.params.id;
@@ -199,7 +333,7 @@ app.delete('/v1/mecanica/matricula/:id', cors(), bodyParserJSON, async function 
    }
 });
 
-//EndPoint: Atualiza matricula pelo id
+//EndPoint: Atualiza matricula pelo id - NAO FUNCIONA
 app.put('/v1/mecanica/matricula/:id', cors(), bodyParserJSON, async function (request, response) {
     //reccebe o content-type da requisicao
     let contentType = request.headers['content-type'];
@@ -312,4 +446,191 @@ app.get('/v1/mecanica/materia/id/:id', cors(), bodyParserJSON, async function(re
 
    response.status(dadosMateria.status)
    response.json(dadosMateria)
+})
+
+///////////////////////////////////////Curso//////////////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de CURSO
+* Data : 05/06/2023
+********************************/
+
+//EndPoint: Post - Insere um novo curso
+app.post('/v1/mecanica/curso', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        //Recebe os dados encaminhados na requisição
+        let dadosBody = request.body
+
+        let resultDadosCurso = await controllerCurso.inserirCurso(dadosBody);
+
+        response.status(resultDadosCurso.status)
+        response.json(resultDadosCurso)
+       
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Atualiza curso pelo id
+app.put('/v1/mecanica/curso/:id', cors(), bodyParserJSON, async function (request, response) {
+    //reccebe o content-type da requisicao
+    let contentType = request.headers['content-type'];
+
+   //Validacao para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+   //Recebe o id do curso pelo parametro
+   let idCurso = request.params.id;
+
+   //Recebe os dados do curso encaminhado no corpo da requisição
+   let dadosBody = request.body;
+
+   //Encaminha os dados para a controller
+   let resultDadosCurso = await controllerCurso.atualizarCurso(dadosBody, idCurso);
+
+   response.status(resultDadosCurso.status)
+   response.json(resultDadosCurso)
+
+} else {
+   response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+   response.json(message.ERROR_INVALID_CONTENT_TYPE)
+}
+
+});
+
+//EndPoint: Exclui um curso existente, filtrando pelo ID
+app.delete('/v1/mecanica/curso/:id', cors(), bodyParserJSON, async function (request, response) {
+    
+    let idCurso = request.params.id;
+
+    //Recebe os dados do curso encaminhado no corpo da requisição 
+    let resultDadosCurso = await controllerCurso.deletarCurso(idCurso)
+
+    if (resultDadosCurso) {
+       response.json(resultDadosCurso);
+       response.status(200);
+   } else {
+       response.json();
+       response.status(404);
+   }
+});
+
+//EndPoint: Retorna todos os cursos
+app.get('/v1/mecanica/cursos', cors(), bodyParserJSON, async function (request, response) {
+ 
+    //Recebe os dados da controller do curso
+    let dadosCurso = await controllerCurso.getCursos()
+
+    response.status(dadosCurso.status)
+    response.json(dadosCurso)
+});
+
+//EndPoint: Retorna o curso pelo id
+app.get('/v1/mecanica/curso/id/:id', cors(), bodyParserJSON, async function(request, response) {
+
+    let id = request.params.id
+
+    let dadosCurso = await controllerCurso.getCursoPorID(id)
+
+    response.status(dadosCurso.status)
+    response.json(dadosCurso)
+})
+
+/////////////////////////////////////////Turma/////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de TURMA
+* Data : 05/06/2023
+********************************/
+
+//EndPoint: Post - Insere uma nova turma
+app.post('/v1/mecanica/turma', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        //Recebe os dados encaminhados na requisição
+        let dadosBody = request.body
+
+        let resultDadosTurma = await controllerTurma.inserirTurma(dadosBody);
+
+        response.status(resultDadosTurma.status)
+        response.json(resultDadosTurma)
+       
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Put -  Atualiza turma pelo id
+app.put('/v1/mecanica/turma/:id', cors(), bodyParserJSON, async function (request, response) {
+    //reccebe o content-type da requisicao
+    let contentType = request.headers['content-type'];
+
+   //Validacao para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+   //Recebe o id da turma pelo parametro
+   let idTurma = request.params.id;
+
+   //Recebe os dados do curso encaminhado no corpo da requisição
+   let dadosBody = request.body;
+
+   //Encaminha os dados para a controller
+   let resultDadosTurma = await controllerTurma.atualizarTurma(dadosBody, idTurma);
+
+   response.status(resultDadosTurma.status)
+   response.json(resultDadosTurma)
+
+} else {
+   response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+   response.json(message.ERROR_INVALID_CONTENT_TYPE)
+}
+
+});
+
+//EndPoint: Exclui uma turma existente, filtrando pelo ID
+app.delete('/v1/mecanica/turma/:id', cors(), bodyParserJSON, async function (request, response) {
+    
+    let idTurma = request.params.id;
+
+    let resultDadosTurma = await controllerTurma.deletarTurma(idTurma)
+
+    if (resultDadosTurma) {
+       response.json(resultDadosTurma);
+       response.status(200);
+   } else {
+       response.json();
+       response.status(404);
+   }
+});
+
+//EndPoint: Retorna todas as turmas
+app.get('/v1/mecanica/turmas', cors(), bodyParserJSON, async function (request, response) {
+ 
+    //Recebe os dados da controller da turma
+    let dadosTurma = await controllerTurma.getTurmas()
+
+    response.status(dadosTurma.status)
+    response.json(dadosTurma)
+});
+
+//EndPoint: Retorna a turma pelo id
+app.get('/v1/mecanica/turma/id/:id', cors(), bodyParserJSON, async function(request, response) {
+
+    let id = request.params.id
+
+    let dados = await controllerTurma.getTurmaPorID(id)
+
+    response.status(dados.status)
+    response.json(dados)
+})
+
+app.listen(8080, function () {
+    console.log('Servidor aguardando requisição na porta 8080')
 })

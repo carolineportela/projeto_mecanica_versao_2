@@ -94,7 +94,6 @@ const selectLastId = async function() {
         return false
 }
 
-
 const selectCursoByID = async function (id) {
     let idCurso = id
 

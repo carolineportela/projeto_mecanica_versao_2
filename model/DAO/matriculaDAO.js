@@ -11,7 +11,7 @@ var {PrismaClient} = require('@prisma/client')
 var prisma = new PrismaClient()
 
 ///////////////// Insert ////////////////////
-const insertMatricula = async function(dadosMatricula) {
+const insertMatricula = async function (dadosMatricula) {
     let sql = `insert into tbl_matricula (
         numero,
         id_aluno,
@@ -25,15 +25,15 @@ const insertMatricula = async function(dadosMatricula) {
     )`
        
     //Executa o scrip sql no banco de dados        
-    let resultStatus = await prisma.$executeRawUnsafe(sql);
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-    if (resultStatus) {
-        return true;
-    } else {
-        return false;
-    }
-
+    if(resultStatus)
+        return true
+    else
+        return false
 }
+
+
 
 ///////////////// Delete////////////////////
 const deleteMatricula = async function(id) {
