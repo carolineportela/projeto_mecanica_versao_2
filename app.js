@@ -275,7 +275,7 @@ app.get('/v1/mecanica/aluno', cors(), async function (request, response) {
 * Objetivo : API de controle de Matricula
 * Data : 04/06/2023
 ********************************/
-//Insere nova matricula - NAO FUNCIONA 
+//Insere nova matricula 
 app.post('/v1/mecanica/matricula', cors(), bodyParserJSON, async function (request, response) {
 
     let contentType = request.headers['content-type']

@@ -18,15 +18,16 @@ const insertMatricula = async function (dadosMatricula) {
         id_turma,
         id_usuario
     ) values (
-        '${dadosMatricula.numero}',
-        '${dadosMatricula.id_aluno}',
-        '${dadosMatricula.id_turma}',
-        '${dadosMatricula.id_usuario}'
+        ${dadosMatricula.numero},
+        ${dadosMatricula.id_aluno},
+        ${dadosMatricula.id_turma},
+        ${dadosMatricula.id_usuario}
     )`
-       
+    
     //Executa o scrip sql no banco de dados        
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
+    
     if(resultStatus)
         return true
     else
