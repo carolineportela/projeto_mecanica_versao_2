@@ -41,6 +41,13 @@ var controllerAluno = require('./controller/controller_aluno.js');
 var controllerMateria = require('./controller/controller_materia.js');
 var controllerCurso = require('./controller/controller_curso.js')
 var controllerTurma = require('./controller/controller_turma.js');
+var controllerTurmaMateria = require('./controller/controller_turma_materia.js')
+var controllerProfessor = require('./controller/controller_professor.js');
+var controllerTarefa = require('./controller/controller_tarefa.js');
+var controllerTipoTarefa = require('./controller/controller_tipoTarefa.js');
+var controllerTipoCriterio = require('./controller/controller_tipoCriterio.js');
+var controllerAvaliacaoProfessor =  require('./controller/controller_avaliacaoProfessor.js');
+var controllerCriterio = require('./controller/controller_criterio.js');
 
 /////////////////////////////////////////Tipo_Usuario//////////////////////////////////////////////
 
@@ -629,7 +636,618 @@ app.get('/v1/mecanica/turma/id/:id', cors(), bodyParserJSON, async function(requ
 
     response.status(dados.status)
     response.json(dados)
+});
+
+
+/////////////////////////////////////////Turma_Materia//////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de turma_materia
+* Data : 05/06/2023
+********************************/
+
+//EndPoint: Post
+app.post('/v1/mecanica/turma/materia', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        //Recebe os dados encaminhados na requisição
+        let dadosBody = request.body
+
+        let resultDadosTurmaMateria = await controllerTurmaMateria.inserirTurmaMateria(dadosBody);
+
+        response.status(resultDadosTurmaMateria.status)
+        response.json(resultDadosTurmaMateria)
+       
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Retorna todos id turmas_materias
+app.get('/v1/mecanica/turmas/materias', cors(), bodyParserJSON, async function (request, response) {
+ 
+    //Recebe os dados da controller da turma_materia
+    let dadosMateria = await controllerTurmaMateria.getTurmaMateria()
+
+    response.status(dadosMateria.status)
+    response.json(dadosMateria)
+});
+
+//EndPoint: Retorna a materia pelo id
+app.get('/v1/mecanica/turmas/materias/:id', cors(), bodyParserJSON, async function(request, response) {
+
+    let id = request.params.id
+ 
+    let dadosTurmaMateria = await controllerTurmaMateria.getTurmaMateriaID(id)
+ 
+    response.status(dadosTurmaMateria.status)
+    response.json(dadosTurmaMateria)
+ })
+
+//EndPoint: Atualiza 
+app.put('/v1/mecanica/turma/materia/:id', cors(), bodyParserJSON, async function (request, response) {
+         //reccebe o content-type da requisicao
+         let contentType = request.headers['content-type'];
+
+        //Validacao para receber dados apenas no formato JSON
+        if (String(contentType).toLowerCase() == 'application/json') {
+
+        let idTurmaMateria = request.params.id;
+
+        //Recebe os dados do curso encaminhado no corpo da requisição
+        let dadosBody = request.body;
+
+        //Encaminha os dados para a controller
+        let resultDadosTurmaMateria = await controllerTurmaMateria.atualizarTurmaMateria(dadosBody, idTurmaMateria);
+
+        response.status(resultDadosTurmaMateria.status)
+        response.json(resultDadosTurmaMateria)
+
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Exclui 
+app.delete('/v1/mecanica/turma/materia/:id', cors(), bodyParserJSON, async function (request, response) {
+    
+    let idTurmaMateria = request.params.id;
+
+    let resultDadosTurmaMateria = await controllerTurmaMateria.deletarTurmaMateria(idTurmaMateria)
+
+    if (resultDadosTurmaMateria) {
+       response.json(resultDadosTurmaMateria);
+       response.status(200);
+   } else {
+       response.json();
+       response.status(404);
+   }
+});
+
+
+///////////////////////////////////////Professor///////////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de PROFESSOR
+* Data : 22/05/2023
+********************************/
+
+//EndPoint: Post - INSERE um professor novo 
+app.post('/v1/mecanica/professor', cors(), bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+        let dadosBody = request.body
+        let resultDadosProfessor = await controllerProfessor.inserirProfessor(dadosBody)
+
+        response.status(resultDadosProfessor.status)
+        response.json(resultDadosProfessor)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+});
+
+//EndPoint: Delete - EXCLUIR um professor existente filtrado pelo ID.
+app.delete('/v1/mecanica/professor/:id', cors(), bodyParserJSON, async function (request, response) {
+    let idProfessor = request.params.id
+
+    let resultDadosProfessor = await controllerProfessor.deletarProfessor(idProfessor)
+
+    if (resultDadosProfessor) {
+        response.json(resultDadosProfessor)
+        response.status(200)
+    } else {
+        response.json()
+        response.status(404)
+    }
+});
+
+//EndPoint: Put - ATUALIZA um professor existente, filtrando pelo ID.
+app.put('/v1/mecanica/professor/:id', cors(), bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+
+        let idProfessor = request.params.id
+
+        let dadosBody = request.body
+
+        let resultDadosProfessor = await controllerProfessor.atualizarProfessor(dadosBody, idProfessor)
+
+        response.status(resultDadosProfessor.status)
+        response.json(resultDadosProfessor)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Retorna o professor filtrando pelo ID 
+app.get('/v1/mecanica/professor/id/:id', cors(), async function (request, response) {
+    let idProfessor = request.params.id
+
+    let dadosProfessor = await controllerProfessor.getProfessorPorID(idProfessor)
+
+    response.status(dadosProfessor.status)
+    response.json(dadosProfessor)
+});
+
+//EndPoint: Retorna todos os professores
+app.get('/v1/mecanica/professor', cors(), async function (request, response) {
+    let dadosProfessor = await controllerProfessor.getProfessores()
+
+    response.status(dadosProfessor.status)
+    response.json(dadosProfessor)
+});
+
+
+
+/////////////////////////////////////////Tipo Tarefas//////////////////////////////////////////////
+
+
+/********************************
+* Objetivo : API de controle de tipos tarefas
+* Data : 27/05/2023
+********************************/
+
+
+//EndPoint: Post - Insere um tipo de TAREFA
+app.post('/v1/mecanica/tipo/tarefa', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerTipoTarefa.inserirTipoTarefa(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Get - Retorna todos os tipos de TAREFAS
+app.get('/v1/mecanica/tipos/tarefas', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerTipoTarefa.getTipoTarefa()
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+//EndPoint: Exclui um tipo de tarefa existente, filtrando pelo ID
+app.delete('/v1/mecanica/tipo/tarefa/:id', cors(), bodyParserJSON, async function (request, response) {
+    
+    let idTipoTarefa = request.params.id;
+    
+    let resultDadosTipoTarefa = await controllerTipoTarefa.deletarTipoTarefa(idTipoTarefa)
+
+    if (resultDadosTipoTarefa) {
+       response.json(resultDadosTipoTarefa);
+       response.status(200);
+   } else {
+       response.json();
+       response.status(404);
+   }
+});
+
+//EndPoint: Atualiza um tipo de tarefa pelo id
+app.put('/v1/mecanica/tipo/tarefa/:id', cors(), bodyParserJSON, async function (request, response) {
+    //recebe o content-type da requisicao
+    let contentType = request.headers['content-type'];
+
+   //Validacao para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+
+   let idTipoTarefa = request.params.id;
+
+   //Recebe os dados do tipo criterio  encaminhado no corpo da requisição
+   let dadosBody = request.body;
+
+   //Encaminha os dados para a controller
+   let resultDadosTipoTarefa = await controllerTipoTarefa.atualizarTipoTarefa(dadosBody, idTipoTarefa);
+
+   response.status(resultDadosTipoTarefa.status)
+   response.json(resultDadosTipoTarefa)
+
+} else {
+   response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+   response.json(message.ERROR_INVALID_CONTENT_TYPE)
+}
+
+});
+
+
+/////////////////////////////////////////Tarefa//////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de tarefas
+* Data : 27/05/2023
+********************************/
+
+
+//EndPoint: Post - Insere uma nova tarefa
+app.post('/v1/mecanica/tarefa', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        //Recebe os dados encaminhados na requisição
+        let dadosBody = request.body
+
+        let resultDadosTarefa = await controllerTarefa.inserirTarefa(dadosBody);
+
+        response.status(resultDadosTarefa.status)
+        response.json(resultDadosTarefa)
+       
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Atualiza tarefa por id
+app.put('/v1/mecanica/tarefa/:id', cors(), bodyParserJSON, async function (request, response) {
+         //reccebe o content-type da requisicao
+         let contentType = request.headers['content-type'];
+
+        //Validacao para receber dados apenas no formato JSON
+        if (String(contentType).toLowerCase() == 'application/json') {
+
+        let idTarefa= request.params.id;
+   
+        let dadosBody = request.body;
+
+        //Encaminha os dados para a controller
+        let resultDadosTarefa = await controllerTarefa.atualizarTarefa(dadosBody, idTarefa);
+
+        response.status(resultDadosTarefa.status)
+        response.json(resultDadosTarefa)
+
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Exclui uma tarefa existente, filtrando pelo ID
+app.delete('/v1/mecanica/tarefa/:id', cors(), bodyParserJSON, async function (request, response) {
+    
+    let idTarefa = request.params.id;
+
+    //Recebe os dados da tarefa encaminhado no corpo da requisição 
+    let resultDadosTarefa = await controllerTarefa.deletarTarefa(idTarefa)
+
+    if (resultDadosTarefa) {
+       response.json(resultDadosTarefa);
+       response.status(200);
+   } else {
+       response.json();
+       response.status(404);
+   }
+});
+
+//EndPoint: Retorna todas tarefas
+app.get('/v1/mecanica/tarefas', cors(), bodyParserJSON, async function (request, response) {
+ 
+     //Recebe os dados da controller do curso
+     let dados = await controllerTarefa.getTarefas()
+
+     response.status(dados.status)
+     response.json(dados)
+});
+
+//EndPoint: Retorna a tarefa por id
+app.get('/v1/mecanica/tarefa/id/:id', cors(), bodyParserJSON, async function(request, response) {
+
+    let id = request.params.id
+
+    let dadosTarefa = await controllerTarefa.getTarefaPorID(id)
+
+    response.status(dadosTarefa.status)
+    response.json(dadosTarefa)
 })
+
+/********************************
+* Objetivo : API de controle de tipo criterio
+* Data : 27/05/2023
+********************************/
+
+//EndPoint: Post - Insere um tipo de CRITERIO
+app.post('/v1/mecanica/tipo/criterio', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerTipoCriterio.inserirTipoCriterio(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Get - Retorna todos os tipos de CRITERIOS
+app.get('/v1/mecanica/tipos/criterios', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerTipoCriterio.getTipoCriterio();
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+//EndPoint: Exclui um tipo de criterio existente, filtrando pelo ID
+app.delete('/v1/mecanica/tipo/criterio/:id', cors(), bodyParserJSON, async function (request, response) {
+    
+    let idCriterio = request.params.id;
+
+    //Recebe os dados do tipo criterio encaminhado no corpo da requisição 
+    let resultDadosTipoCriterio = await controllerTipoCriterio.deletarTipoCriterio(idCriterio)
+
+    if (resultDadosTipoCriterio) {
+       response.json(resultDadosTipoCriterio);
+       response.status(200);
+   } else {
+       response.json();
+       response.status(404);
+   }
+});
+
+
+//EndPoint: Atualiza um tipo de criterio pelo id
+app.put('/v1/mecanica/tipo/criterio/:id', cors(), bodyParserJSON, async function (request, response) {
+    //recebe o content-type da requisicao
+    let contentType = request.headers['content-type'];
+
+   //Validacao para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+   //Recebe o id do tipo criterio pelo parametro
+   let idCriterio = request.params.id;
+
+   //Recebe os dados do tipo criterio  encaminhado no corpo da requisição
+   let dadosBody = request.body;
+
+   //Encaminha os dados para a controller
+   let resultDadosTipoCriterio = await controllerTipoCriterio.atualizarTipoCriterio(dadosBody, idCriterio);
+
+   response.status(resultDadosTipoCriterio.status)
+   response.json(resultDadosTipoCriterio)
+
+} else {
+   response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+   response.json(message.ERROR_INVALID_CONTENT_TYPE)
+}
+
+});
+
+
+
+
+
+
+
+/////////////////////////////////////////Avaliacao Professor//////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de Avaliacao Professor
+* Data : 29/05/2023
+********************************/
+
+//EndPoint: Post - Insere uma nova avaliacao do Professor
+app.post('/v1/mecanica/avaliacao/professor', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        //Recebe os dados encaminhados na requisição
+        let dadosBody = request.body
+
+        let resultDadosAvaliacaoProfessor = await controllerAvaliacaoProfessor.inserirAvaliacaoProfessor(dadosBody);
+
+        response.status(resultDadosAvaliacaoProfessor.status)
+        response.json(resultDadosAvaliacaoProfessor)
+       
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Atualiza a avaliacao professor pelo id
+app.put('/v1/mecanica/avaliacao/professor/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type'];
+
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+   let idAvaliacaoProfessor = request.params.id;
+
+   let dadosBody = request.body;
+
+   //Encaminha os dados para a controller
+   let resultDadosAvaliacaoProfessor = await controllerAvaliacaoProfessor.atualizarAvaliacaoProfessor(dadosBody, idAvaliacaoProfessor);
+
+   response.status(resultDadosAvaliacaoProfessor.status)
+   response.json(resultDadosAvaliacaoProfessor)
+
+} else {
+   response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+   response.json(message.ERROR_INVALID_CONTENT_TYPE)
+}
+
+});
+
+
+//EndPoint: Exclui uma avaliacao do professor existente, filtrando pelo ID
+app.delete('/v1/mecanica/avaliacao/professor/:id', cors(), bodyParserJSON, async function (request, response) {
+    
+    let idAvaliacaoProfessor = request.params.id;
+
+    let resultDadosAvaliacaoProfessor = await controllerAvaliacaoProfessor.deletarAvaliacaoProfessor(idAvaliacaoProfessor)
+
+    if (resultDadosAvaliacaoProfessor) {
+       response.json(resultDadosAvaliacaoProfessor);
+       response.status(200);
+   } else {
+       response.json();
+       response.status(404);
+   }
+});
+
+//EndPoint: Retorna todas as avaliacoes professor
+app.get('/v1/mecanica/avaliacao/professor', cors(), bodyParserJSON, async function (request, response) {
+ 
+    //Recebe os dados da controller 
+    let dadosAvaliacaoProfessor = await controllerAvaliacaoProfessor.getAvaliacaoProfessor()
+
+    response.status(dadosAvaliacaoProfessor.status)
+    response.json(dadosAvaliacaoProfessor)
+});
+
+//EndPoint: Retorna a avaliacao professor pelo id
+app.get('/v1/mecanica/avaliacao/professor/id/:id', cors(), bodyParserJSON, async function(request, response) {
+
+    let id = request.params.id
+
+    let dadosAvaliacaoProfessor = await controllerAvaliacaoProfessor.getAvaliacaoProfessorPorId(id)
+
+    response.status(dadosAvaliacaoProfessor.status)
+    response.json(dadosAvaliacaoProfessor)
+})
+
+
+/////////////////////////////////////////Avaliacao Professor//////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de Avaliacao Professor
+* Data : 29/05/2023
+********************************/
+
+//EndPoint: Post - Insere uma nova avaliacao do Professor
+app.post('/v1/mecanica/avaliacao/professor', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        //Recebe os dados encaminhados na requisição
+        let dadosBody = request.body
+
+        let resultDadosAvaliacaoProfessor = await controllerAvaliacaoProfessor.inserirAvaliacaoProfessor(dadosBody);
+
+        response.status(resultDadosAvaliacaoProfessor.status)
+        response.json(resultDadosAvaliacaoProfessor)
+       
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+
+
+
+/////////////////////////////////////////Criterio//////////////////////////////////////////////
+
+/********************************
+* Objetivo : API de controle de Criterio
+* Data : 29/05/2023
+********************************/
+
+//EndPoint: Post - Insere um novo criterio
+app.post('/v1/mecanica/criterio', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        //Recebe os dados encaminhados na requisição
+        let dadosBody = request.body
+
+        let resultDadosCriterio = await controllerCriterio.inserirCriterio(dadosBody);
+
+        response.status(resultDadosCriterio.status)
+        response.json(resultDadosCriterio)
+       
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+
+//EndPoint: Atualiza criterio pelo id
+app.put('/v1/mecanica/criterio/:id', cors(), bodyParserJSON, async function (request, response) {
+    //reccebe o content-type da requisicao
+    let contentType = request.headers['content-type'];
+
+   //Validacao para receber dados apenas no formato JSON
+   if (String(contentType).toLowerCase() == 'application/json') {
+
+   let idCriterio = request.params.id;
+
+   //Recebe os dados do curso encaminhado no corpo da requisição
+   let dadosBody = request.body;
+
+   //Encaminha os dados para a controller
+   let resultDadosCriterio = await controllerCriterio.atualizarCriterio(dadosBody, idCriterio);
+
+   response.status(resultDadosCriterio.status)
+   response.json(resultDadosCriterio)
+
+} else {
+   response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+   response.json(message.ERROR_INVALID_CONTENT_TYPE)
+}
+
+});
 
 app.listen(8080, function () {
     console.log('Servidor aguardando requisição na porta 8080')
