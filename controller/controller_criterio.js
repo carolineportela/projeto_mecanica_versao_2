@@ -15,7 +15,6 @@ const { request } = require('express')
 const inserirCriterio = async function (dadosCriterio) {
 
     if (dadosCriterio.descricao == '' || dadosCriterio.descricao == undefined ||
-        dadosCriterio.resultado_desejado == '' || dadosCriterio.resultado_desejado == undefined ||
         dadosCriterio.id_tipo_criterio == '' || dadosCriterio.id_tipo_criterio == undefined ||
         dadosCriterio.id_tarefa == '' || dadosCriterio.id_tarefa == undefined
     ) {
@@ -41,7 +40,6 @@ const inserirCriterio = async function (dadosCriterio) {
 const atualizarCriterio = async function (dadosCriterio, idCriterio) {
 
     if (dadosCriterio.descricao == '' || dadosCriterio.descricao == undefined ||
-        dadosCriterio.resultado_desejado == '' || dadosCriterio.resultado_desejado == undefined ||
         dadosCriterio.id_tipo_criterio == '' || dadosCriterio.id_tipo_criterio == undefined ||
         dadosCriterio.id_tarefa == '' || dadosCriterio.id_tarefa == undefined
     ) {
@@ -65,7 +63,7 @@ const atualizarCriterio = async function (dadosCriterio, idCriterio) {
                 dadosCriterioJSON.status = message.SUCESS_UPDATED_ITEM.status
                 dadosCriterioJSON.message = message.SUCESS_UPDATED_ITEM.message
                 dadosCriterioJSON.criterio = dadosCriterio
-                return  dadosCriterioJSON
+                return dadosCriterioJSON
             } else
                 return message.ERROR_INTERNAL_SERVER
 
@@ -83,19 +81,19 @@ const deletarCriterio = async function (idCriterio) {
     if (statusId) {
 
         if (idCriterio == '' || idCriterio == undefined || isNaN(idCriterio)) {
-            return message.ERROR_INVALID_ID; 
+            return message.ERROR_INVALID_ID;
         } else {
             let resultDadosCriterio = await criterioDAO.deleteCriterio(idCriterio)
 
             if (resultDadosCriterio) {
                 return message.SUCESS_DELETED_ITEM
             } else {
-                return message.ERROR_INTERNAL_SERVER 
+                return message.ERROR_INTERNAL_SERVER
             }
         }
 
     } else {
-        return message.ERROR_NOT_FOUND 
+        return message.ERROR_NOT_FOUND
     }
 }
 
@@ -118,9 +116,30 @@ const getCriterio = async function () {
     }
 }
 
-module.exports ={
+
+const getCriterioPorId = async function (id) {
+
+    if (id == '' || id == undefined || isNaN(id)) {
+        return message.ERROR_INVALID_ID
+    } else {
+        let dadosCriterioJSON = {}
+
+        let dadosCriterio = await criterioDAO.selectCriterioByID(id)
+
+        if (dadosCriterio) {
+            dadosCriterioJSON.status = message.SUCESS_REQUEST.status
+            dadosCriterioJSON.message = message.SUCESS_REQUEST.message
+            dadosCriterioJSON.criterio = dadosCriterio
+            return dadosCriterioJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    }
+}
+module.exports = {
     inserirCriterio,
     atualizarCriterio,
     deletarCriterio,
-    getCriterio
+    getCriterio,
+    getCriterioPorId
 }

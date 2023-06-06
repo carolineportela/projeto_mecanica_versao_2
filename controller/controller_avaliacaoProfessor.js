@@ -30,7 +30,7 @@ const inserirAvaliacaoProfessor = async function (dadosAvaliacaoProfessor) {
 
             let dadosAvaliacaoProfessorJSON = {}
             dadosAvaliacaoProfessorJSON.status = message.SUCESS_CREATED_ITEM.status
-            dadosAvaliacaoProfessorJSON.avaliacoesAluno = novaAvaliacaoProfessor
+            dadosAvaliacaoProfessorJSON.avaliacoesProfessor = novaAvaliacaoProfessor
 
             return dadosAvaliacaoProfessorJSON
         }
