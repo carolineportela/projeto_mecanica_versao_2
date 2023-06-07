@@ -13,14 +13,14 @@ var prisma = new PrismaClient()
 const insertMargemErro = async function (dadosMargemErro) {
 
     let sql = `insert into tbl_margem_erro (
-            valor_minimo,
-            valor_maximo
-            id_criterio
-    ) values (
-            '${dadosMargemErro.valor_minimo}',
-            '${dadosMargemErro.valor_maximo}',
-             ${dadosMargemErro.id_criterio}
-    )`
+        valor_minimo,
+        valor_maximo,
+        id_criterio
+        ) values (
+        '${dadosMargemErro.valor_minimo}',
+        '${dadosMargemErro.valor_maximo}',
+        '${dadosMargemErro.id_criterio}'
+        )`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
@@ -38,7 +38,7 @@ const updateMargemErro = async function (dadosMargemErro) {
                     valor_minimo = '${dadosMargemErro.valor_minimo}',
                     valor_maximo = '${dadosMargemErro.valor_maximo}',
                     id_criterio = '${dadosMargemErro.id_criterio}'
-                    where id = ${dadosResultadoObtido.id}    
+                    where id = ${dadosMargemErro.id}    
                 `
     //Executa o scrip sql no banco de dados        
     let resultStatus = await prisma.$executeRawUnsafe(sql);
@@ -63,7 +63,7 @@ const getAllMargemErro = async function () {
 
 }
 
-const getMargemErroByID = async function (id) {
+const selectMargemErroByID = async function (id) {
 
     let sql = `select * from tbl_margem_erro where id = ${id}`
 
@@ -76,12 +76,12 @@ const getMargemErroByID = async function (id) {
     }
 }
 
-const deleteMargemErro = async function(id) {
+const deleteMargemErro = async function (id) {
     let sql = `delete from tbl_margem_erro where id = ${id}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-    if(resultStatus)
+    if (resultStatus)
         return true
     else
         return false
@@ -100,11 +100,14 @@ const selectLastId = async function () {
 }
 
 
+
+
+
 module.exports = {
     insertMargemErro,
     updateMargemErro,
     getAllMargemErro,
-    getMargemErroByID,
+    selectMargemErroByID,
     deleteMargemErro,
     selectLastId
 }

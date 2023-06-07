@@ -53,6 +53,8 @@ var controllerResultadoObtido =  require('./controller/controller_resultadoObtid
 var controllerSemestre =  require('./controller/controller_semestre.js');
 var controllerRegistroTempo =  require('./controller/controller_registroTempo.js');
 var controllerMargemErro =  require('./controller/controller_margem_erro.js');
+var controllerResultadoDesejado =  require('./controller/controller_resultado_desejado.js');
+
 
 
 /////////////////////////////////////////Tipo_Usuario//////////////////////////////////////////////
@@ -94,6 +96,34 @@ app.get('/v1/mecanica/tipos', cors(), async function (request, response) {
     response.json(dados)
 
 });
+
+
+//EndPoint: Retorna o tipo usuario filtrando pelo ID 
+app.get('/v1/mecanica/tipo/usuario/id/:id', cors(), async function (request, response) {
+    let idTipoUsuario = request.params.id
+
+    let dadosTipoUsuario = await controllerTipoUsuario.getTipoUsuarioID(idTipoUsuario)
+
+    response.status(dadosTipoUsuario.status)
+    response.json(dadosTipoUsuario)
+});
+
+//EndPoint: Exclui um tipo usuario pelo id
+app.delete('/v1/mecanica/tipo/usuario/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let idTipoUsuario = request.params.id;
+
+    let resultDadosTipoUsuario = await controllerTipoUsuario.deletarTipoUsuario(idTipoUsuario)
+
+    if (resultDadosTipoUsuario) {
+        response.json(resultDadosTipoUsuario);
+        response.status(200);
+    } else {
+        response.json();
+        response.status(404);
+    }
+});
+
 
 
 /////////////////////////////////////////Usuario//////////////////////////////////////////////
@@ -1386,6 +1416,68 @@ app.post('/v1/mecanica/resultado', cors(), bodyParserJSON, async function (reque
 });
 
 
+//EndPoint: Put - Atualiza um resultado obtido
+app.put('/v1/mecanica/resultado/obtido/:id', cors(), bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let idResultado = request.params.id
+
+        let dadosBody = request.body
+
+        let resultDadosResultadoObtido = await controllerResultadoObtido.atualizarResultadoObtido(dadosBody, idResultado)
+
+        response.status(resultDadosResultadoObtido.status)
+        response.json(resultDadosResultadoObtido)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+
+});
+
+//EndPoint: Get - Retorna todos resultados obtidos
+app.get('/v1/mecanica/resultados/obtidos', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerResultadoObtido.getResultadosObtidos()
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+//EndPoint: Retorna o resultado obtido pelo id
+app.get('/v1/mecanica/resultado/obtido/id/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let id = request.params.id
+
+    let dadosResultado = await controllerResultadoObtido.getResultadoPorID(id)
+
+    response.status(dadosResultado.status)
+    response.json(dadosResultado)
+})
+
+
+//EndPoint: Exclui um semestre
+app.delete('/v1/mecanica/resultado/obtido/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let idResultado = request.params.id;
+
+    let resultDados = await controllerResultadoObtido.deletarResultadoObtido(idResultado)
+
+    if (resultDados) {
+        response.json(resultDados);
+        response.status(200);
+    } else {
+        response.json();
+        response.status(404);
+    }
+});
+
+
+
 /////////////////////////////////////////Tipo_Usuario//////////////////////////////////////////////
 
 
@@ -1592,6 +1684,160 @@ app.post('/v1/margem/erro', cors(), bodyParserJSON, async function (request, res
     }
 
 });
+
+
+//EndPoint: Put - Atualiza uma margem de erro
+app.put('/v1/margem/erro/id/:id', cors(), bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let idMargemErro = request.params.id
+
+        let dadosBody = request.body
+
+        let resultDados = await controllerMargemErro.atualizarMargemDeErro(dadosBody, idMargemErro)
+
+        response.status(resultDados.status)
+        response.json(resultDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+
+});
+
+
+//EndPoint: Get - Retorna todas margens erro
+app.get('/v1/mecanica/margem/erro', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerMargemErro.getMargemErro()
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+//EndPoint: Retorna a margem de erro pelo id
+app.get('/v1/mecanica/margem/erro/id/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let id = request.params.id
+
+    let dados = await controllerMargemErro.getMargemErroPorID(id)
+
+    response.status(dados.status)
+    response.json(dados)
+});
+
+//EndPoint: Delete - Exclui uma margem de erro
+app.delete('/v1/mecanica/margem/erro/id/:id', cors(), async function (request, response) {
+    let idMargemErro = request.params.id
+
+    let resultDados = await controllerMargemErro.deletarMargemErro(idMargemErro)
+
+    if (resultDados) {
+        response.json(resultDados)
+        response.status(message.SUCESS_DELETED_ITEM.status)
+    } else {
+        response.json()
+        response.status(message.ERROR_NOT_FOUND.status)
+    }
+
+});
+
+
+///////////////////////////////////////// Resultado Desejado //////////////////////////////////////////////
+
+
+/********************************
+* Objetivo : API de controle de resultado desejado
+* Data : 07/06//2023
+********************************/
+
+//EndPoint: Post - Insere um resultado desejado
+app.post('/v1/mecanica/resultado/desejado', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerResultadoDesejado.inserirResultadoDesjeado(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});;
+
+
+//EndPoint: Put - Atualiza um resultado desejado
+app.put('/v1/mecanica/resultado/desejado/id/:id', cors(), bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let idResultadoDesejado = request.params.id
+
+        let dadosBody = request.body
+
+        let resultDados = await controllerResultadoDesejado.atualizarResultadoDesejado(dadosBody, idResultadoDesejado)
+
+        response.status(resultDados.status)
+        response.json(resultDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+
+});
+
+
+//EndPoint: Get - Retorna todos resultados desejados
+app.get('/v1/mecanica/resultado/desejado', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerResultadoDesejado.getResultadosDesejados()
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+//EndPoint: Retorna o resultado desejado  pelo id
+app.get('/v1/mecanica/resultado/desejado/id/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let id = request.params.id
+
+    let dados = await controllerResultadoDesejado.getResultadoDesejadoPorID(id)
+
+    response.status(dados.status)
+    response.json(dados)
+})
+
+
+//EndPoint: Delete - Exclui um resultado desejado
+app.delete('/v1/mecanica/resultado/desejado/id/:id', cors(), async function (request, response) {
+    let idResultadoDesejado = request.params.id
+
+    let resultDados = await controllerResultadoDesejado.deletarResultadoDesejado(idResultadoDesejado)
+
+    if (resultDados) {
+        response.json(resultDados)
+        response.status(message.SUCESS_DELETED_ITEM.status)
+    } else {
+        response.json()
+        response.status(message.ERROR_NOT_FOUND.status)
+    }
+
+});
+
 
 
 

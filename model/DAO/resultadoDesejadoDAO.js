@@ -1,25 +1,25 @@
 /***************************************************************************************************************************************************
- * Objetivo: Responsavel pela manipulação de dados dos RESULTADOS OBTIDOS no Banco de Dados
- * Data: 06/06/2023
- * Autor: Mateus Alves
+ * Objetivo: Responsavel pela manipulação de dados de resultado desejado no Banco de Dados
+ * Data: 07/06/2023
+ * Autor: Caroline Portela
  * Versão: 1.0
  ***************************************************************************************************************************************************/
 
+//Import da biblioteca do prisma client
 var { PrismaClient } = require('@prisma/client')
 
 var prisma = new PrismaClient()
 
-const insertResultado = async function (dadosResultadoObtido) {
 
-    let sql = `insert into tbl_resultado_obtido (
-            resultado,
-            id_matricula,
-            id_criterio
-    ) values (
-            '${dadosResultadoObtido.resultado}',
-            '${dadosResultadoObtido.id_matricula}',
-            '${dadosResultadoObtido.id_criterio}'
-    )`
+const insertResultadoDesejado = async function (dadosResultadoDesejado) {
+
+    let sql = `insert into tbl_resultado_desejado (
+        resultado,
+        id_criterio
+        ) values (
+        '${dadosResultadoDesejado.resultado}',
+        '${dadosResultadoDesejado.id_criterio}'
+        )`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
@@ -31,13 +31,13 @@ const insertResultado = async function (dadosResultadoObtido) {
 
 }
 
-const updateResultado = async function (dadosResultadoObtido) {
-    let sql =      `update tbl_resultado_obtido set
-                    resultado = '${dadosResultadoObtido.resultado}',
-                    id_criterio = ${dadosResultadoObtido.id_criterio},
-                    id_matricula = ${dadosResultadoObtido.id_matricula}
+
+const updateResultadoDesejado = async function (dadosResultadoDesejado) {
+    let sql = `update tbl_resultado_desejado set
+                    resultado = '${dadosResultadoDesejado.resultado}',
+                    id_criterio = ${dadosResultadoDesejado.id_criterio}
                  
-                    where id = ${dadosResultadoObtido.id}    
+                    where id = ${dadosResultadoDesejado.id}    
                 `
     //Executa o scrip sql no banco de dados        
     let resultStatus = await prisma.$executeRawUnsafe(sql);
@@ -50,7 +50,7 @@ const updateResultado = async function (dadosResultadoObtido) {
 
 const getAllResultados = async function () {
 
-    let sql = `select * from tbl_resultado_obtido`
+    let sql = `select * from tbl_resultado_desejado`
 
     let rsResultado = await prisma.$queryRawUnsafe(sql)
 
@@ -62,9 +62,10 @@ const getAllResultados = async function () {
 
 }
 
+
 const getResultadoByID = async function (id) {
 
-    let sql = `select * from tbl_resultado_obtido where id = ${id}`
+    let sql = `select * from tbl_resultado_desejado where id = ${id}`
 
     let rsResultadoID = await prisma.$queryRawUnsafe(sql)
 
@@ -75,9 +76,8 @@ const getResultadoByID = async function (id) {
     }
 }
 
-
-const deleteResultadoObtido = async function(id) {
-    let sql = `delete from tbl_resultado_obtido where id = ${id}`
+const deleteResultadoDesejado = async function(id) {
+    let sql = `delete from tbl_resultado_desejado where id = ${id}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
@@ -88,22 +88,23 @@ const deleteResultadoObtido = async function(id) {
 }
 
 const selectLastId = async function () {
-    let sql = `select * from tbl_resultado_obtido order by id desc limit 1;`
+    let sql = `select * from tbl_resultado_desejado order by id desc limit 1;`
 
-    let rsResultado = await prisma.$queryRawUnsafe(sql)
+    let rs = await prisma.$queryRawUnsafe(sql)
 
-    if (rsResultado.length > 0)
-        return rsResultado
+    if (rs.length > 0)
+        return rs
     else
         return false
 }
 
 
+
 module.exports = {
-    insertResultado,
-    getAllResultados,
-    getResultadoByID,
+    insertResultadoDesejado,
+    updateResultadoDesejado,
     selectLastId,
-    deleteResultadoObtido,
-    updateResultado
+    getResultadoByID,
+    getAllResultados,
+    deleteResultadoDesejado
 }

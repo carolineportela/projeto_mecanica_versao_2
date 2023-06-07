@@ -37,7 +37,7 @@ const inserirResultadoObtido = async function (dadosResultadoObtido) {
 const atualizarResultadoObtido = async function (dadosResultadoObtido, idResultadoObtido) {
 
    if (dadosResultadoObtido.resultado == '' || dadosResultadoObtido.resultado == undefined ||
-       dadosResultadoObtido.id_aluno == '' || dadosResultadoObtido.id_aluno == undefined ||
+       dadosResultadoObtido.id_matricula == '' || dadosResultadoObtido.id_matricula == undefined ||
        dadosResultadoObtido.id_criterio == '' || dadosResultadoObtido.id_criterio == undefined
    ) {
        return message.ERROR_REQUIRED_FIELDS
@@ -47,7 +47,7 @@ const atualizarResultadoObtido = async function (dadosResultadoObtido, idResulta
        //Adiciona o id no JSON dos dados
        dadosResultadoObtido.id = idResultadoObtido;
 
-       let statusId = await resultadoObtidoDAO.selectResultadoByID(idResultadoObtido)
+       let statusId = await resultadoObtidoDAO.getResultadoByID(idResultadoObtido)
 
        if (statusId) {
 
@@ -71,16 +71,55 @@ const atualizarResultadoObtido = async function (dadosResultadoObtido, idResulta
 
 }
 
+const getResultadosObtidos = async function () {
+    let resultadosJSON = {}
+
+    let resultados = await resultadoObtidoDAO.getAllResultados()
+
+    if (resultados) {
+
+        resultadosJSON.status = message.SUCESS_REQUEST.status
+        resultadosJSON.message = message.SUCESS_REQUEST.message
+        resultadosJSON.quantidade = resultadosJSON.length;
+        resultadosJSON.todosResultadosObtidos = resultados
+
+        return resultadosJSON
+
+    } else {
+        return message.ERROR_NOT_FOUND
+    }
+}
+
+const getResultadoPorID = async function (id) {
+
+    if(id == '' || id == undefined || isNaN(id)) {
+        return message.ERROR_INVALID_ID
+    } else {
+        let dadosJSON = {}
+
+        let dadosResultadoObtido = await resultadoObtidoDAO.getResultadoByID(id)
+
+        if(dadosResultadoObtido) {
+            dadosJSON.status = message.SUCESS_REQUEST.status
+            dadosJSON.message = message.SUCESS_REQUEST.message
+            dadosJSON.resultadoObtidos = dadosResultadoObtido
+            return dadosJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    }
+}
+
 const deletarResultadoObtido = async function (idResultadoObtido) {
 
-   let statusId = await resultadoObtidoDAO.selectResultadoByID(idResultadoObtido);
+   let statusId = await resultadoObtidoDAO.getResultadoByID(idResultadoObtido);
 
    if (statusId) {
 
        if (idResultadoObtido == '' || idResultadoObtido == undefined || isNaN(idResultadoObtido)) {
            return message.ERROR_INVALID_ID;
        } else {
-           let resultDados = await resultadoObtidoDAO.deletarResultadoObtido(idResultadoObtido)
+           let resultDados = await resultadoObtidoDAO.deleteResultadoObtido(idResultadoObtido)
 
            if (resultDados) {
                return message.SUCESS_DELETED_ITEM
@@ -97,5 +136,7 @@ const deletarResultadoObtido = async function (idResultadoObtido) {
 module.exports = {
    inserirResultadoObtido,
    atualizarResultadoObtido,
-   deletarResultadoObtido
+   deletarResultadoObtido,
+   getResultadosObtidos,
+   getResultadoPorID
 }

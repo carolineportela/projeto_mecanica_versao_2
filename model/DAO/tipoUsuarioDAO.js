@@ -1,7 +1,7 @@
 /***************************************************************************************************************************************************
  * Objetivo: Responsavel pela manipulação de dados dos Tipos de Usuario no Banco de Dados
- * Data: 19/05/2023
- * Autor: Mateus Alves
+ * Data: 07/06/2023
+ * Autor: Caroline Portela
  * Versão: 1.0
  ***************************************************************************************************************************************************/
 
@@ -10,7 +10,7 @@ var {PrismaClient} = require('@prisma/client')
 
 var prisma = new PrismaClient()
 
-const insertTipoUsuario = async function(dadosTipoUsuario){
+const insertTipoUsuario = async function (dadosTipoUsuario) {
     let sql = `insert into tbl_tipo_usuario (
             tipo
     ) values (
@@ -19,12 +19,13 @@ const insertTipoUsuario = async function(dadosTipoUsuario){
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-    if(resultStatus)
+    if (resultStatus) {
         return true
-    else
+    } else {
         return false
-}
+    }
 
+}
 const selectAllTipos = async function() {
     let sql = 'select * from tbl_tipo_usuario'
     
@@ -36,6 +37,36 @@ const selectAllTipos = async function() {
         return false
     
 }
+
+const deleteTipoUsuario = async function (id) {
+    let idTipoUsuario = id;
+
+    let sql = `delete from tbl_tipo_usuario where id = ${idTipoUsuario}`
+
+    let resultStatus = await prisma.$executeRawUnsafe(sql)
+
+    if (resultStatus) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+const selectTipoUsuarioByID = async function (id) {
+    let idTipoUsuario = id
+
+    let sql = `select * from tbl_tipo_usuario where id = ${idTipoUsuario}`;
+
+    let rs = await prisma.$queryRawUnsafe(sql);
+
+    if (rs.length > 0) {
+        return rs;
+    }
+    else {
+        return false;
+    }
+}
+
 
 const selectLastId = async function() {
     let sql = `select * from tbl_tipo_usuario order by id desc limit 1;`
@@ -51,5 +82,7 @@ const selectLastId = async function() {
 module.exports = {
     insertTipoUsuario,
     selectLastId,
-    selectAllTipos
+    selectAllTipos,
+    deleteTipoUsuario,
+    selectTipoUsuarioByID
 }
