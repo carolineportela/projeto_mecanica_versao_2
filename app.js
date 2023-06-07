@@ -50,6 +50,10 @@ var controllerAvaliacaoProfessor = require('./controller/controller_avaliacaoPro
 var controllerCriterio = require('./controller/controller_criterio.js');
 var controllerAvaliacaoMatricula = require('./controller/controller_avaliacaoMatricula.js');
 var controllerResultadoObtido =  require('./controller/controller_resultadoObtido.js');
+var controllerSemestre =  require('./controller/controller_semestre.js');
+var controllerRegistroTempo =  require('./controller/controller_registroTempo.js');
+var controllerMargemErro =  require('./controller/controller_margem_erro.js');
+
 
 /////////////////////////////////////////Tipo_Usuario//////////////////////////////////////////////
 
@@ -1381,6 +1385,213 @@ app.post('/v1/mecanica/resultado', cors(), bodyParserJSON, async function (reque
 
 });
 
+
+/////////////////////////////////////////Tipo_Usuario//////////////////////////////////////////////
+
+
+/********************************
+* Objetivo : API de controle de Semestre
+* Data : 06/062023
+********************************/
+
+
+//EndPoint: Post - Insere um semestre
+app.post('/v1/mecanica/semestre', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerSemestre.inserirSemestre(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+//EndPoint: Put - Atualiza um semestre, filtrando pelo ID
+app.put('/v1/mecanica/semestre/editando/:id', cors(), bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let idSemestre = request.params.id
+
+        let dadosBody = request.body
+
+        let resultDadosSemestre = await controllerSemestre.atualizarSemestre(dadosBody, idSemestre)
+
+        response.status(resultDadosSemestre.status)
+        response.json(resultDadosSemestre)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+
+});
+
+
+//EndPoint: Get - Retorna todos semestres
+app.get('/v1/mecanica/semestre', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerSemestre.getSemestre()
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+//EndPoint: Retorna o semestre pelo id
+app.get('/v1/mecanica/semestre/id/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let id = request.params.id
+
+    let dados = await controllerSemestre.getSemestrePorID(id)
+
+    response.status(dados.status)
+    response.json(dados)
+})
+
+//EndPoint: Exclui um semestre
+app.delete('/v1/mecanica/semestre/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let idSemestre = request.params.id;
+
+    let resultDados = await controllerSemestre.deletarSemestre(idSemestre)
+
+    if (resultDados) {
+        response.json(resultDados);
+        response.status(200);
+    } else {
+        response.json();
+        response.status(404);
+    }
+});
+
+
+
+/////////////////////////////////////////Tipo_Usuario//////////////////////////////////////////////
+
+
+/********************************
+* Objetivo : API de controle de Registro Tempo
+* Data : 06/062023
+********************************/
+
+
+//EndPoint: Post - Insere um registro tempo
+app.post('/v1/mecanica/registro/tempo', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerRegistroTempo.inserirRegistroTempo(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
+
+
+//EndPoint: Put - Atualiza um registro tempo
+app.put('/v1/mecanica/registro/tempo/:id', cors(), bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let idRegistroTempo = request.params.id
+
+        let dadosBody = request.body
+
+        let resultDados = await controllerRegistroTempo.atualizarRegistroTempo(dadosBody, idRegistroTempo)
+
+        response.status(resultDados.status)
+        response.json(resultDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+
+});
+
+//EndPoint: Get - Retorna todos registros de tempo
+app.get('/v1/mecanica/registro/tempo', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerRegistroTempo.getRegistroTempo()
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+//EndPoint: Retorna o registro pelo id
+app.get('/v1/mecanica/registro/id/:id', cors(), bodyParserJSON, async function (request, response) {
+
+    let id = request.params.id
+
+    let dados = await controllerRegistroTempo.getRegistroTempoPorID(id)
+
+    response.status(dados.status)
+    response.json(dados)
+})
+
+
+//EndPoint: Delete - Exclui um registro tempo pelo id
+app.delete('/v1/mecanica/registro/tempo/:id', cors(), async function (request, response) {
+    let idRegistro = request.params.id
+
+    let resultDados = await controllerRegistroTempo.deletarRegistroTempo(idRegistro)
+
+    if (resultDados) {
+        response.json(resultDados)
+        response.status(message.SUCESS_DELETED_ITEM.status)
+    } else {
+        response.json()
+        response.status(message.ERROR_NOT_FOUND.status)
+    }
+
+});
+
+///////////////////////////////////////// Margem Erro //////////////////////////////////////////////
+
+
+/********************************
+* Objetivo : API de controle de margem erro
+* Data : 06/062023
+********************************/
+
+
+//EndPoint: Post - Insere margem erro
+app.post('/v1/margem/erro', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerMargemErro.inserirMargemErro(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
 
 
 

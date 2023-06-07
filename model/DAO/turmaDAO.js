@@ -44,7 +44,7 @@ const deleteTurma = async function(id) {
 }
 
 ///////////////////////Updates//////////////////////////
-const updateTurma = async function(dadosTurma, idCurso) {
+const updateTurma = async function(dadosTurma) {
 
     let sql = `update tbl_turma set
                     nome = '${dadosTurma.nome}',
