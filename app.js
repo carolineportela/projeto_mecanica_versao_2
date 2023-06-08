@@ -49,13 +49,13 @@ var controllerTipoCriterio = require('./controller/controller_tipoCriterio.js');
 var controllerAvaliacaoProfessor = require('./controller/controller_avaliacaoProfessor.js');
 var controllerCriterio = require('./controller/controller_criterio.js');
 var controllerAvaliacaoMatricula = require('./controller/controller_avaliacaoMatricula.js');
-var controllerResultadoObtido =  require('./controller/controller_resultadoObtido.js');
-var controllerSemestre =  require('./controller/controller_semestre.js');
-var controllerRegistroTempo =  require('./controller/controller_registroTempo.js');
-var controllerMargemErro =  require('./controller/controller_margem_erro.js');
-var controllerResultadoDesejado =  require('./controller/controller_resultado_desejado.js');
-var controllerCursoMateria =  require('./controller/controller_curso_materia.js');
-var controllerMateriaTarefa =  require('./controller/controller_materia_tarefa.js');
+var controllerResultadoObtido = require('./controller/controller_resultadoObtido.js');
+var controllerSemestre = require('./controller/controller_semestre.js');
+var controllerRegistroTempo = require('./controller/controller_registroTempo.js');
+var controllerMargemErro = require('./controller/controller_margem_erro.js');
+var controllerResultadoDesejado = require('./controller/controller_resultado_desejado.js');
+var controllerCursoMateria = require('./controller/controller_curso_materia.js');
+var controllerMateriaTarefa = require('./controller/controller_materia_tarefa.js');
 
 
 
@@ -572,6 +572,22 @@ app.get('/v1/mecanica/cursos', cors(), bodyParserJSON, async function (request, 
 
     response.status(dadosCurso.status)
     response.json(dadosCurso)
+});
+
+
+
+//EndPoint: Filtragem das turma pelo curso
+app.get('/v1/mecanica/turma/idCurso/:idCurso', cors(), bodyParserJSON, async function (request, response) {
+
+
+    let idCurso = request.params.idCurso
+
+    //Recebe os dados da controller da turma_materia
+    let dados = await controllerTurma.getTurmasIDCurso(idCurso)
+
+    response.status(dados.status)
+    response.json(dados)
+
 });
 
 //EndPoint: Retorna o curso pelo id
@@ -1257,18 +1273,18 @@ app.put('/v1/mecanica/avaliacao/matricula/:id', cors(), bodyParserJSON, async fu
 
 //EndPoint: Exclui uma avaliacao  existente, filtrando pelo ID
 app.delete('/v1/mecanica/avaliacao/matricula/:id', cors(), bodyParserJSON, async function (request, response) {
-    
+
     let idAvaliacao = request.params.id;
 
     let resultDadosAvaliacaoMatricula = await controllerAvaliacaoMatricula.deletarAvaliacaoAluno(idAvaliacao)
 
     if (resultDadosAvaliacaoMatricula) {
-       response.json(resultDadosAvaliacaoMatricula)
-       response.status(200);
-   } else {
-       response.json();
-       response.status(404);
-   }
+        response.json(resultDadosAvaliacaoMatricula)
+        response.status(200);
+    } else {
+        response.json();
+        response.status(404);
+    }
 });
 
 //EndPoint: Get - Retorna todas avaliacoes
@@ -1283,7 +1299,7 @@ app.get('/v1/mecanica/avaliacoes', cors(), async function (request, response) {
 });
 
 //EndPoint: Retorna a avaliacao  pelo id
-app.get('/v1/mecanica/avaliacao/:id', cors(), bodyParserJSON, async function(request, response) {
+app.get('/v1/mecanica/avaliacao/:id', cors(), bodyParserJSON, async function (request, response) {
 
     let id = request.params.id
 
@@ -1409,7 +1425,7 @@ app.post('/v1/mecanica/resultado', cors(), bodyParserJSON, async function (reque
 
         response.status(resultDadosResultado.status)
         response.json(resultDadosResultado)
-       
+
     } else {
         response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
         response.json(message.ERROR_INVALID_CONTENT_TYPE)

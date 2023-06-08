@@ -11,6 +11,7 @@ var message = require('./modulo/config.js')
 
 var turmaDAO = require('../model/DAO/turmaDAO.js')
 var cursoDAO = require('../model/DAO/cursoDAO.js')
+
 const { request } = require('express')
 
 const inserirTurma = async function (dadosTurma) {
@@ -129,14 +130,14 @@ const getTurmas = async function () {
 
 const getTurmaPorID = async function (id) {
 
-    if(id == '' || id == undefined || isNaN(id)) {
+    if (id == '' || id == undefined || isNaN(id)) {
         return message.ERROR_INVALID_ID
     } else {
         let dadosJSON = {}
 
         let dados = await turmaDAO.selectTurmaByID(id)
 
-        if(dados) {
+        if (dados) {
             dadosJSON.status = message.SUCESS_REQUEST.status
             dadosJSON.message = message.SUCESS_REQUEST.message
             dadosJSON.turma = dados
@@ -147,10 +148,34 @@ const getTurmaPorID = async function (id) {
     }
 }
 
+const getTurmasIDCurso = async (idCurso) => {
+
+    if (idCurso == null || idCurso == undefined || idCurso == '') {
+        return message.ERROR_INVALID_ID
+    } else {
+
+        let dadosJSON = {}
+        let dadosTurmas = await turmaDAO.selectTurmaByIDCurso(idCurso)
+
+        if (dadosTurmas) {
+
+            dadosJSON.status = message.SUCESS_CREATED_ITEM.status
+            dadosJSON.message = message.SUCESS_REQUEST.message
+            dadosJSON.turmas = dadosTurmas
+
+            return dadosJSON
+        } else {
+            return message.ERROR_INVALID_ID
+        }
+
+    }
+}
+
 module.exports = {
     inserirTurma,
     atualizarTurma,
     deletarTurma,
     getTurmas,
-    getTurmaPorID
+    getTurmaPorID,
+    getTurmasIDCurso
 }
