@@ -6,79 +6,76 @@
  ***************************************************************************************************************************************************/
 
 //Import da biblioteca do prisma client
-var {PrismaClient} = require('@prisma/client')
+var { PrismaClient } = require('@prisma/client')
 
 var prisma = new PrismaClient()
 
 ////////////////////////Inserts//////////////////////////
-const insertTarefa = async function(dadosTarefa) {
+const insertTarefa = async function (dadosTarefa) {
     let sql = `insert into tbl_tarefa (
         nome,
         numero,
         tempo_previsto,
-        id_materia,
         id_tipo_tarefa
     ) values (
         '${dadosTarefa.nome}',
         '${dadosTarefa.numero}',
         '${dadosTarefa.tempo_previsto}',
-        '${dadosTarefa.id_materia}',
-        '${dadosTarefa.id_tipo_tarefa}'
+        ${dadosTarefa.id_tipo_tarefa}
     )`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-    if(resultStatus)
+    if (resultStatus)
         return true
     else
         return false
 }
 
 //////////////////////Deletes///////////////////////////
-const deleteTarefa = async function(id) {
+const deleteTarefa = async function (id) {
     let sql = `delete from tbl_tarefa where id = ${id}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-    if(resultStatus)
+    if (resultStatus)
         return true
     else
         return false
 }
 
 ///////////////////////Updates//////////////////////////
-const updateTarefa = async function(dadosTarefa) {
-     let sql = `update tbl_tarefa set
+const updateTarefa = async function (dadosTarefa) {
+    let sql = `update tbl_tarefa set
                     nome = '${dadosTarefa.nome}',
                     numero = '${dadosTarefa.numero}',
                     tempo_previsto = '${dadosTarefa.tempo_previsto}',
-                    id_materia = '${dadosTarefa.id_materia}',
                     id_tipo_tarefa = '${dadosTarefa.id_tipo_tarefa}'
                 where id = ${dadosTarefa.id}    
             `
 
     //Executa o scriptSQL no BD
     let resultStatus = await prisma.$executeRawUnsafe(sql)
-    
-    if(resultStatus)
+
+    if (resultStatus)
         return true
     else
         return false
 }
 
 ///////////////////////Selects//////////////////////////
-const selectAllTarefas = async function() {
+const selectAllTarefas = async function () {
     let sql = `select * from tbl_tarefa`
-    
+
     let rsTarefa = await prisma.$queryRawUnsafe(sql)
 
-    if(rsTarefa.length > 0)
+    if (rsTarefa.length > 0)
         return rsTarefa
     else
         return false
 }
 
-const selectTarefaByID = async function(id) {
+const selectTarefaByID = async function (id) {
 
     let sql = `select * from tbl_tarefa where id = ${id}`;
 

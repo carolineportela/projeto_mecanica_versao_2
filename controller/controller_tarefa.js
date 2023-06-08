@@ -19,15 +19,14 @@ const inserirTarefa = async function (dadosTarefa) {
     if (dadosTarefa.nome == '' || dadosTarefa.nome == undefined || dadosTarefa.nome.length > 150 ||
         dadosTarefa.numero == '' || dadosTarefa.numero == undefined ||
         dadosTarefa.tempo_previsto == '' || dadosTarefa.tempo_previsto == undefined ||
-        dadosTarefa.id_materia == '' || dadosTarefa.id_materia == undefined ||
         dadosTarefa.id_tipo_tarefa == '' || dadosTarefa.id_tipo_tarefa == undefined
     ) {
         return message.ERROR_REQUIRED_FIELDS
     } else {
-        let verificacaoMateria = await materiaDAO.selectMateriaByID(dadosTarefa.id_materia)
+
         let verificacaoTipoTarefa = await tipoTarefaDAO.selectTipoTarefaByID(dadosTarefa.id_tipo_tarefa)
 
-        if (verificacaoMateria == false || verificacaoTipoTarefa == false) {
+        if (verificacaoTipoTarefa == false) {
             return message.ERROR_INVALID_ID
         }
         else {
@@ -54,7 +53,6 @@ const atualizarTarefa = async function (dadosTarefa, idTarefa) {
     if (dadosTarefa.nome == '' || dadosTarefa.nome == undefined || dadosTarefa.nome.length > 150 ||
         dadosTarefa.numero == '' || dadosTarefa.numero == undefined ||
         dadosTarefa.tempo_previsto == '' || dadosTarefa.tempo_previsto == undefined ||
-        dadosTarefa.id_materia == '' || dadosTarefa.id_materia == undefined ||
         dadosTarefa.id_tipo_tarefa == '' || dadosTarefa.id_tipo_tarefa == undefined
     ) {
         return message.ERROR_REQUIRED_FIELDS
@@ -131,18 +129,18 @@ const getTarefas = async function () {
 }
 const getTarefaPorID = async function (id) {
 
-    if(id == '' || id == undefined || isNaN(id)) {
+    if (id == '' || id == undefined || isNaN(id)) {
         return message.ERROR_INVALID_ID
     } else {
         let dadosTarefaJSON = {}
 
         let dadosTarefa = await tarefaDAO.selectTarefaByID(id)
 
-        if(dadosTarefa) {
+        if (dadosTarefa) {
             dadosTarefaJSON.status = message.SUCESS_REQUEST.status
             dadosTarefaJSON.message = message.SUCESS_REQUEST.message
             dadosTarefaJSON.tarefa = dadosTarefa
-            return  dadosTarefaJSON
+            return dadosTarefaJSON
         } else {
             return message.ERROR_NOT_FOUND
         }

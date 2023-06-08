@@ -46,7 +46,7 @@ const inserirMatricula = async function (dadosMatricula) {
 
 const atualizarMatricula = async function (dadosMatricula, idMatricula) {
 
-    if (dadosMatricula.numero == '' || dadosMatricula.numero == undefined || dadosMatricula.numero > 20 ||
+    if (dadosMatricula.numero == '' || dadosMatricula.numero == undefined || dadosMatricula.numero.length > 20 ||
         dadosMatricula.id_aluno == '' || dadosMatricula.id_aluno == undefined ||
         dadosMatricula.id_turma == '' || dadosMatricula.id_turma == undefined ||
         dadosMatricula.id_usuario == '' || dadosMatricula.id_usuario == undefined
