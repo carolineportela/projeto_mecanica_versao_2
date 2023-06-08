@@ -1,22 +1,22 @@
 /***************************************************************************************************************************************************
  * Objetivo: Responsavel pela manipulação de dados das MATERIAS das TURMAS no Banco de Dados
- * Data: 28/05/2023
- * Autor: Mateus Alves
+ * Data: 08/06/2023
+ * Autor: Caroline Portela
  * Versão: 1.0
  ***************************************************************************************************************************************************/
+
 
 var { PrismaClient } = require('@prisma/client')
 
 var prisma = new PrismaClient()
 
-
-const insertTurmaMateria = async function (dadosTurmaMateria) {
-    let sql = `insert into tbl_turma_materia (
-        id_turma,
+const insertCursoMateria = async function (dadosCursoMateria) {
+    let sql = `insert into tbl_curso_materia (
+        id_curso,
         id_materia
     ) values (
-        ${dadosTurmaMateria.id_turma},
-        ${dadosTurmaMateria.id_materia}
+        ${dadosCursoMateria.id_curso},
+        ${dadosCursoMateria.id_materia}
     )`
     //Executa o scrip sql no banco de dados        
     let resultStatus = await prisma.$executeRawUnsafe(sql);
@@ -29,11 +29,12 @@ const insertTurmaMateria = async function (dadosTurmaMateria) {
 
 }
 
-const updateTurmaMateria = async function(dadosTurmaMateria) {
-    let sql = `update tbl_turma_materia set
-                    id_turma = '${dadosTurmaMateria.id_turma}',
-                    id_materia = '${dadosTurmaMateria.id_materia}'
-                where id = ${dadosTurmaMateria.id}    
+
+const updateCursoMateria = async function(dadosCursoMateria) {
+    let sql = `update tbl_curso_materia set
+                    id_curso = ${dadosCursoMateria.id_curso},
+                    id_materia = ${dadosCursoMateria.id_materia}
+                where id = ${dadosCursoMateria.id}    
             `
 
     //Executa o scriptSQL no BD
@@ -46,10 +47,10 @@ const updateTurmaMateria = async function(dadosTurmaMateria) {
 }
 
 
-const deleteTurmaMateria = async function(id) {
-    let idTurmaMateria = id;
+const deleteCursoMateria = async function(id) {
+    let idCursoMateria = id;
 
-    let sql = `delete from tbl_turma_materia where id = ${idTurmaMateria}`
+    let sql = `delete from tbl_curso_materia where id = ${idCursoMateria}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
@@ -60,13 +61,13 @@ const deleteTurmaMateria = async function(id) {
     }
 }
 
-const selectAllTurmasMaterias = async function () {
-    let sql = `select * from tbl_turma_materia`
+const selectAllCursoMateria = async function () {
+    let sql = `select * from tbl_curso_materia`
 
-    let rsTurmaTarefaID = await prisma.$queryRawUnsafe(sql)
+    let rsTurmaMateriaID = await prisma.$queryRawUnsafe(sql)
 
-    if (rsTurmaTarefaID.length > 0) {
-        return rsTurmaTarefaID;
+    if (rsTurmaMateriaID.length > 0) {
+        return rsTurmaMateriaID;
     }
     else {
         return false;
@@ -74,8 +75,8 @@ const selectAllTurmasMaterias = async function () {
 
 }
 
-const selectTurmaMateriaByID = async function (id) {
-    let sql = `select * from tbl_turma_materia where id = ${id}`;
+const selectCursoMateriaByID = async function (id) {
+    let sql = `select * from tbl_curso_materia where id = ${id}`;
 
     let rsTurmaMateria = await prisma.$queryRawUnsafe(sql);
 
@@ -86,22 +87,27 @@ const selectTurmaMateriaByID = async function (id) {
         return false;
     }
 }
+
+
+
 const selectLastId = async function() {
-    let sql = `select * from tbl_turma_materia order by id desc limit 1;`
+    let sql = `select * from tbl_curso_materia order by id desc limit 1;`
 
-    let rsTurmaMateria = await prisma.$queryRawUnsafe(sql)
+    let rs= await prisma.$queryRawUnsafe(sql)
 
-    if(rsTurmaMateria.length > 0)
-        return rsTurmaMateria
+    if(rs.length > 0)
+        return rs
     else
         return false
 }
 
+
 module.exports = {
-    selectAllTurmasMaterias,
-    selectTurmaMateriaByID,
-    insertTurmaMateria,
-    deleteTurmaMateria,
+    insertCursoMateria,
     selectLastId,
-    updateTurmaMateria
+    updateCursoMateria,
+    selectCursoMateriaByID,
+    selectAllCursoMateria,
+    deleteCursoMateria
+
 }

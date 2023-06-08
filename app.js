@@ -54,6 +54,7 @@ var controllerSemestre =  require('./controller/controller_semestre.js');
 var controllerRegistroTempo =  require('./controller/controller_registroTempo.js');
 var controllerMargemErro =  require('./controller/controller_margem_erro.js');
 var controllerResultadoDesejado =  require('./controller/controller_resultado_desejado.js');
+var controllerCursoMateria =  require('./controller/controller_curso_materia.js');
 
 
 
@@ -1838,6 +1839,84 @@ app.delete('/v1/mecanica/resultado/desejado/id/:id', cors(), async function (req
 
 });
 
+/////////////////////////////////////////Curso e Materia Intermediaria//////////////////////////////////////////////
+
+
+/********************************
+* Objetivo : API de controle de Curso_Materia
+* Data : 25/05/2023
+********************************/
+
+
+//EndPoint: Post - Insere id de curso e materia
+app.post('/v1/mecanica/curso/materia', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerCursoMateria.inserirCursoMateria(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});;
+
+
+//EndPoint: Put - Atualiza id de curso e materia
+app.put('/v1/mecanica/curso/materia/id/:id', cors(), bodyParserJSON, async function (request, response) {
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let idCursoMateria = request.params.id
+
+        let dadosBody = request.body
+
+        let resultDados = await controllerCursoMateria.atualizarCursoMateria(dadosBody, idCursoMateria)
+
+        response.status(resultDados.status)
+        response.json(resultDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+
+});
+
+
+//EndPoint: Get - Retorna todos id de curso e materia
+app.get('/v1/mecanica/curso/materia', cors(), async function (request, response) {
+
+    //Recebe os dados da controller
+    let dados = await controllerCursoMateria.getCursoMateria()
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+//EndPoint: Delete - Exclui um resultado desejado
+app.delete('/v1/mecanica/curso/materia/id/:id', cors(), async function (request, response) {
+    let idCursoMateria = request.params.id
+
+    let resultDados = await controllerCursoMateria.deletarCursoMateria(idCursoMateria)
+
+    if (resultDados) {
+        response.json(resultDados)
+        response.status(message.SUCESS_DELETED_ITEM.status)
+    } else {
+        response.json()
+        response.status(message.ERROR_NOT_FOUND.status)
+    }
+
+});
 
 
 
