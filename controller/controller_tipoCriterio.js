@@ -9,8 +9,7 @@
 
 var message = require('./modulo/config.js')
 
-var tipoCriterioDAO = require('../model/DAO/tipoCriterioDAO.JS')
-const { request } = require('express')
+var tipoCriterioDAO = require('../model/DAO/tipoCriterioDAO.js')
 
 const inserirTipoCriterio = async function (dadosTipoCriterio) {
     if (dadosTipoCriterio.tipo == undefined || dadosTipoCriterio.tipo == '') {
