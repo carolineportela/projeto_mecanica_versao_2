@@ -783,6 +783,21 @@ app.delete('/v1/mecanica/turma/materia/:id', cors(), bodyParserJSON, async funct
 });
 
 
+//EndPoint: Filtragem das materia pela turma
+app.get('/v1/mecanica/materia/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
+
+
+    let idTurma = request.params.idTurma
+
+    let dados = await controllerMateria.getMateriaIDTurma(idTurma)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+
 ///////////////////////////////////////Professor///////////////////////////////////////////////////
 
 /********************************

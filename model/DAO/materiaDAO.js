@@ -6,12 +6,12 @@
  ***************************************************************************************************************************************************/
 
 //Import da biblioteca do prisma client
-var {PrismaClient} = require('@prisma/client')
+var { PrismaClient } = require('@prisma/client')
 
 var prisma = new PrismaClient()
 
 ////////////////////////Inserts//////////////////////////
-const insertMateria = async function(dadosMateria) {
+const insertMateria = async function (dadosMateria) {
     let sql = `insert into tbl_materia (
         nome,
         sigla
@@ -22,27 +22,27 @@ const insertMateria = async function(dadosMateria) {
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-    if(resultStatus)
+    if (resultStatus)
         return true
     else
         return false
 }
 
 //////////////////////Deletes///////////////////////////
-const deleteMateria = async  function(id) {
+const deleteMateria = async function (id) {
     let sql = `delete from tbl_materia where id = ${id}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
-    if(resultStatus)
+    if (resultStatus)
         return true
     else
         return false
 }
 
 ///////////////////////Updates//////////////////////////
-const updateMateria = async function(dadosMateria) {
-     let sql = `update tbl_materia set
+const updateMateria = async function (dadosMateria) {
+    let sql = `update tbl_materia set
                     nome = '${dadosMateria.nome}',
                     sigla = '${dadosMateria.sigla}'
                 where id = ${dadosMateria.id}    
@@ -50,24 +50,51 @@ const updateMateria = async function(dadosMateria) {
 
     //Executa o scriptSQL no BD
     let resultStatus = await prisma.$executeRawUnsafe(sql)
-    
-    if(resultStatus)
+
+    if (resultStatus)
         return true
     else
         return false
 }
 
 ///////////////////////Selects//////////////////////////
-const selectAllMaterias = async function() {
+const selectAllMaterias = async function () {
     let sql = `select * from tbl_materia`
-    
+
     let rsMateria = await prisma.$queryRawUnsafe(sql)
 
-    if(rsMateria.length > 0)
+    if (rsMateria.length > 0)
         return rsMateria
     else
         return false
 }
+
+// Retorna a materia filtrando pela turma
+const selectMateriaByIDTurma = async function (idTurma) {
+    let idMateriaTurma = idTurma
+
+    let sql = ` select materia.id, materia.nome as nome_materia, 
+                    materia.sigla as sigla_materia, 
+                    turma.nome as nome_turma, 
+                    turma.sigla as sigla_turma
+                        from tbl_materia as materia
+                        inner join tbl_turma_materia 
+                            on tbl_turma_materia.id_materia = materia.id
+                        inner join tbl_turma as turma
+                             on tbl_turma_materia.id_turma = turma.id
+                where turma.id = ${idMateriaTurma};`;
+
+    let rs = await prisma.$queryRawUnsafe(sql)
+
+    if (rs.length > 0) {
+        return rs
+    } else {
+        return false;
+    }
+
+
+}
+
 
 const selectLastId = async function () {
     let sql = `select * from tbl_materia order by id desc limit 1;`
@@ -101,5 +128,6 @@ module.exports = {
     deleteMateria,
     selectAllMaterias,
     selectLastId,
-    selectMateriaByID
+    selectMateriaByID,
+    selectMateriaByIDTurma
 }
