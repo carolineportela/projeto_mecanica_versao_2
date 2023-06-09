@@ -61,7 +61,7 @@ var controllerMateriaTarefa = require('./controller/controller_materia_tarefa.js
 
 /////////////////////////////////////////Tipo_Usuario//////////////////////////////////////////////
 
-
+/////
 /********************************
 * Objetivo : API de controle de TIPO_USUARIO
 * Data : 25/05/2023
