@@ -76,7 +76,7 @@ const selectAllTurmas = async function () {
 }
 
 
-// Retorna o Turma filtrando pelo ID de Curso
+// Retorna  Turma filtrando pelo ID de Curso
 const selectTurmaByIDCurso = async function (idCurso) {
     let idTurmaCurso = idCurso
 

@@ -575,7 +575,6 @@ app.get('/v1/mecanica/cursos', cors(), bodyParserJSON, async function (request, 
 });
 
 
-
 //EndPoint: Filtragem das turma pelo curso
 app.get('/v1/mecanica/turma/idCurso/:idCurso', cors(), bodyParserJSON, async function (request, response) {
 
