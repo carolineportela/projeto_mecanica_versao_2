@@ -11,7 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//model tbl_teste {
-//id Int @id @default(autoincrement())
-//nome String
-//}
+model tbl_teste {
+id Int @id @default(autoincrement())
+nome String
+}
