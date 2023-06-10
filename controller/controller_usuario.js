@@ -59,7 +59,7 @@ const atualizarUsuario = async function (dadosUsuario, idUsuario) {
 
         dadosUsuario.id = idUsuario;
 
-        let statusId = await usuarioDAO.selectUsuarioByID(id);
+        let statusId = await usuarioDAO.selectLastId();
 
         if (statusId) {
             //Encaminha os dados para a model do aluno
@@ -71,7 +71,7 @@ const atualizarUsuario = async function (dadosUsuario, idUsuario) {
                 dadosUsuarioJSON.status = message.SUCESS_UPDATED_ITEM.status
                 dadosUsuarioJSON.message = message.SUCESS_UPDATED_ITEM.message
                 dadosUsuarioJSON.usuario = dadosUsuario
-                return dadosAlunosJSON
+                return dadosUsuarioJSON
             } else
                 return message.ERROR_INTERNAL_SERVER
 
@@ -141,10 +141,37 @@ const getUsuarioPorID = async function (id) {
     }
 }
 
+
+const getUsuarioPorEmailSenha = async (email, senha) => {
+
+    if (email == null || email == undefined || email == '' ||
+        senha == null || senha == undefined || senha == '') {
+        return message.ERROR_INTERNAL_SERVER
+    } else {
+
+        let dadosJSON = {}
+        let dadosUsuario = await usuarioDAO.selectUsuarioByEmailAndSenha(email,senha)
+
+        if (dadosUsuario) {
+
+            dadosJSON.status = message.SUCESS_CREATED_ITEM.status
+            dadosJSON.message = message.SUCESS_REQUEST.message
+            dadosJSON.usuarios = dadosUsuario
+
+            return dadosJSON
+        } else {
+            return message.ERROR_INVALID_ID
+        }
+
+    }
+}
+
+
 module.exports = {
     inserirUsuario,
     atualizarUsuario,
     deletarUsuario,
     getUsuario,
-    getUsuarioPorID
+    getUsuarioPorID,
+    getUsuarioPorEmailSenha
 }

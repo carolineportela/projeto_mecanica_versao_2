@@ -47,7 +47,8 @@ const updateUsuario = async function(dadosUsuario) {
     let sql = `update tbl_usuario set
                     email = '${dadosUsuario.email}',
                     senha = '${dadosUsuario.senha}',
-                    id_tipo_usuario = '${id_tipo_usuario}'
+                    id_tipo_usuario = ${dadosUsuario.id_tipo_usuario}
+
                 where id = ${dadosUsuario.id}    
             `
 
@@ -104,6 +105,22 @@ const selectLastId = async function() {
         return false
 }
 
+const selectUsuarioByEmailAndSenha = async function(email, senha) {
+    let sql = `select tbl_usuario.email as usuario_email, tbl_usuario.senha as usuario_senha,
+                        tbl_tipo_usuario.tipo as tipo_usuario
+                from tbl_usuario
+                    inner join tbl_tipo_usuario
+                        on tbl_tipo_usuario.id = tbl_usuario.id_tipo_usuario
+                where tbl_usuario.email = '${email}' and tbl_usuario.senha = '${senha}';`
+    
+    let rs = await prisma.$queryRawUnsafe(sql)
+
+    if(rs.length > 0)
+        return rs
+    else
+        return false
+}
+
 ///////////////////////Selects//////////////////////////
 const selectAllUsuarios = async function() {
     let sql = `select * from tbl_usuario`
@@ -127,5 +144,6 @@ module.exports = {
   selectUsuarioByEmail,
   selectUsuarioByType,
   selectLastId,
-  selectAllUsuarios
+  selectAllUsuarios,
+  selectUsuarioByEmailAndSenha
 }

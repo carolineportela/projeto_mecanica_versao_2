@@ -216,6 +216,22 @@ app.get('/v1/mecanica/usuario/id/:id', cors(), bodyParserJSON, async function (r
 })
 
 
+//EndPoint: Retorna o usuario por email e senha
+app.get('/v1/mecanica/usuario/email/:email/senha/:senha', cors(), bodyParserJSON, async function (request, response) {
+
+
+    let emailUsuario = request.params.email
+    let senhaUsuario = request.params.senha
+
+    //Recebe os dados da controller da turma_materia
+    let dados = await controllerUsuario.getUsuarioPorEmailSenha(emailUsuario,senhaUsuario)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
 /////////////////////////////////////// Aluno ////////////////////////////////////////////
 
 /********************************
