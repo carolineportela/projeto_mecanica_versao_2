@@ -55,7 +55,7 @@ var controllerMargemErro = require('./controller/controller_margem_erro.js');
 var controllerResultadoDesejado = require('./controller/controller_resultado_desejado.js');
 var controllerCursoMateria = require('./controller/controller_curso_materia.js');
 var controllerMateriaTarefa = require('./controller/controller_materia_tarefa.js');
-var controllerCursoProfessor = require('./controller/controller_curso_professor.js');
+var controllerCursoTurmaProfessor = require('./controller/controller_curso_turma_professor.js');
 
 
 
@@ -2048,20 +2048,20 @@ app.delete('/v1/mecanica/materia/tarefa/id/:id', cors(), async function (request
 
 
 /********************************
-* Objetivo : API de controle de Curso e Professor
+* Objetivo : API de controle da tabela intermedia Curso_Turma_Professor
 * Data : 10/06/2023
 ********************************/
 
 
 //EndPoint: Post - Insere id do curso e do professor
-app.post('/v1/mecanica/curso/professor', cors(), bodyParserJSON, async function (request, response) {
+app.post('/v1/mecanica/curso/turma/professor', cors(), bodyParserJSON, async function (request, response) {
 
     let contentType = request.headers['content-type']
 
     if (String(contentType).toLowerCase() == 'application/json') {
         let dadosBody = request.body
 
-        let resulDados = await controllerCursoProfessor.inserirCursoProfessor(dadosBody)
+        let resulDados = await controllerCursoTurmaProfessor.inserirCursoTurmaProfessor(dadosBody)
 
         response.status(resulDados.status)
         response.json(resulDados)
@@ -2073,17 +2073,16 @@ app.post('/v1/mecanica/curso/professor', cors(), bodyParserJSON, async function 
 });
 
 
-
-//EndPoint: Put - Atualiza id do curso e do professor pelo id
-app.put('/v1/mecanica/curso/professor/id/:id', cors(), bodyParserJSON, async function (request, response) {
+//EndPoint: Put - Atualiza id do curso/turma e do professor pelo id
+app.put('/v1/mecanica/curso/turma/professor/id/:id', cors(), bodyParserJSON, async function (request, response) {
     let contentType = request.headers['content-type']
 
     if (String(contentType).toLowerCase() == 'application/json') {
-        let idCursoProfessor = request.params.id
+        let idCursoTurmaProfessor = request.params.id
 
         let dadosBody = request.body
 
-        let resultDados = await controllerCursoProfessor.atualizarCursoProfessor(dadosBody, idCursoProfessor)
+        let resultDados = await controllerCursoTurmaProfessor.atualizarCursoTurmaDoProfessor(dadosBody, idCursoTurmaProfessor)
 
         response.status(resultDados.status)
         response.json(resultDados)
@@ -2097,10 +2096,10 @@ app.put('/v1/mecanica/curso/professor/id/:id', cors(), bodyParserJSON, async fun
 
 
 //EndPoint: Get - Retorna todos
-app.get('/v1/mecanica/curso/professor', cors(), async function (request, response) {
+app.get('/v1/mecanica/curso/turma/professor', cors(), async function (request, response) {
 
     //Recebe os dados da controller
-    let dados = await controllerCursoProfessor.getCursoProfessor()
+    let dados = await controllerCursoTurmaProfessor.getCursoTurmaProfessor()
 
     response.status(dados.status)
     response.json(dados)
@@ -2109,11 +2108,11 @@ app.get('/v1/mecanica/curso/professor', cors(), async function (request, respons
 
 
 //EndPoint: Retorna pelo id
-app.get('/v1/mecanica/curso/professor/id/:id', cors(), bodyParserJSON, async function (request, response) {
+app.get('/v1/mecanica/curso/turma/professor/id/:id', cors(), bodyParserJSON, async function (request, response) {
 
     let id = request.params.id
 
-    let dados = await controllerCursoProfessor.getCursoProfessorID(id)
+    let dados = await controllerCursoTurmaProfessor.getCursoTurmaProfessorID(id)
 
     response.status(dados.status)
     response.json(dados)
@@ -2121,14 +2120,14 @@ app.get('/v1/mecanica/curso/professor/id/:id', cors(), bodyParserJSON, async fun
 
 
 //EndPoint: Delete - Exclui pelo id
-app.delete('/v1/mecanica/curso/professor/:id', cors(), async function (request, response) {
+app.delete('/v1/mecanica/curso/turma/professor/:id', cors(), async function (request, response) {
 
-    let idCursoProfessor = request.params.id
+    let idCursoTurmaProfessor = request.params.id
 
-    let resultDadosCursoProfessor = await controllerCursoProfessor.deletarCursoProfessor(idCursoProfessor)
+    let resultDadosCursoTurmaProfessor = await controllerCursoTurmaProfessor.deletarCursoTurmaProfessor(idCursoTurmaProfessor)
 
-    if (resultDadosCursoProfessor) {
-        response.json(resultDadosCursoProfessor)
+    if (resultDadosCursoTurmaProfessor) {
+        response.json(resultDadosCursoTurmaProfessor)
         response.status(message.SUCESS_DELETED_ITEM.status)
     } else {
         response.json()

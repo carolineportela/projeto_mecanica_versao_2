@@ -10,13 +10,15 @@ var { PrismaClient } = require('@prisma/client')
 
 var prisma = new PrismaClient()
 
-const insertCursoProfessor = async function (dadosCursoProfessor) {
-    let sql = `insert into tbl_curso_professor (     
-        id_professor,
-        id_curso
+const insertCursoTurmaProfessor = async function (dadosCursoTurmaProfessor) {
+    let sql = `insert into tbl_curso_turma_professor (     
+        id_curso,
+        id_turma,
+        id_professor        
     ) values (
-        ${dadosCursoProfessor.id_professor},
-        ${dadosCursoProfessor.id_curso}
+        ${dadosCursoTurmaProfessor.id_curso},
+        ${dadosCursoTurmaProfessor.id_turma},
+        ${dadosCursoTurmaProfessor.id_professor}
     )`
     //Executa o scrip sql no banco de dados        
     let resultStatus = await prisma.$executeRawUnsafe(sql);
@@ -29,11 +31,13 @@ const insertCursoProfessor = async function (dadosCursoProfessor) {
 
 }
 
-const updateCursoProfessor = async function(dadosCursoProfessor) {
-    let sql = `update tbl_curso_professor set
-                    id_professor = ${dadosCursoProfessor.id_professor},
-                    id_curso = ${dadosCursoProfessor.id_curso}
-                where id = ${dadosCursoProfessor.id}    
+const updateCursoTurmaProfessor = async function(dadosCursoTurmaProfessor) {
+    let sql = `update tbl_curso_turma_professor set
+                    id_curso = ${dadosCursoTurmaProfessor.id_curso},
+                    id_turma = ${dadosCursoTurmaProfessor.id_turma},
+                    id_professor = ${dadosCursoTurmaProfessor.id_professor}
+                   
+                where id = ${dadosCursoTurmaProfessor.id}    
             `
 
     //Executa o scriptSQL no BD
@@ -45,10 +49,10 @@ const updateCursoProfessor = async function(dadosCursoProfessor) {
       }
 }
 
-const deleteCursoProfessor = async function(id) {
+const deleteCursoTurmaProfessor = async function(id) {
     let idCursoProfessor = id;
 
-    let sql = `delete from tbl_curso_professor where id = ${idCursoProfessor}`
+    let sql = `delete from tbl_curso_turma_professor where id = ${idCursoProfessor}`
 
     let resultStatus = await prisma.$executeRawUnsafe(sql)
 
@@ -59,8 +63,8 @@ const deleteCursoProfessor = async function(id) {
     }
 }
 
-const selectCursoProfessorByID = async function(id) {
-    let sql = `select * from tbl_curso_professor where id = ${id}`
+const selectCursoTurmaProfessorByID = async function(id) {
+    let sql = `select * from tbl_curso_turma_professor where id = ${id}`
     
     let rs = await prisma.$queryRawUnsafe(sql)
 
@@ -72,8 +76,8 @@ const selectCursoProfessorByID = async function(id) {
 
 
 
-const selectAllCursoProfessor = async function () {
-    let sql = `select * from tbl_curso_professor`
+const selectAllCursoTurmaProfessor = async function () {
+    let sql = `select * from tbl_curso_turma_professor`
 
     let rs = await prisma.$queryRawUnsafe(sql)
 
@@ -87,7 +91,7 @@ const selectAllCursoProfessor = async function () {
 }
 
 const selectLastId = async function() {
-    let sql = `select * from tbl_curso_professor order by id desc limit 1;`
+    let sql = `select * from tbl_curso_turma_professor order by id desc limit 1;`
 
     let rs= await prisma.$queryRawUnsafe(sql)
 
@@ -98,10 +102,10 @@ const selectLastId = async function() {
 }
 
 module.exports = {
-    insertCursoProfessor,
-    updateCursoProfessor,
-    deleteCursoProfessor,
-    selectAllCursoProfessor,
-    selectCursoProfessorByID,
+    insertCursoTurmaProfessor,
+    updateCursoTurmaProfessor,
+    deleteCursoTurmaProfessor,
+    selectAllCursoTurmaProfessor,
+    selectCursoTurmaProfessorByID,
     selectLastId
 }
