@@ -171,11 +171,36 @@ const getTurmasIDCurso = async (idCurso) => {
     }
 }
 
+const getAlunosMateriasIDTurma = async (idTurma) => {
+
+    if (idTurma == null || idTurma == undefined || idTurma == '') {
+        return message.ERROR_INVALID_ID
+    } else {
+
+        let dadosJSON = {}
+        let dadosAlunosMateriasDaTurma = await turmaDAO.selectAlunosMateriasByIDTurma(idTurma)
+
+        if (dadosAlunosMateriasDaTurma) {
+
+            dadosJSON.status = message.SUCESS_CREATED_ITEM.status
+            dadosJSON.message = message.SUCESS_REQUEST.message
+            dadosJSON.alunos_materias_da_turma = dadosAlunosMateriasDaTurma
+
+            return dadosJSON
+        } else {
+            return message.ERROR_INVALID_ID
+        }
+
+    }
+}
+
+
 module.exports = {
     inserirTurma,
     atualizarTurma,
     deletarTurma,
     getTurmas,
     getTurmaPorID,
-    getTurmasIDCurso
+    getTurmasIDCurso,
+    getAlunosMateriasIDTurma
 }

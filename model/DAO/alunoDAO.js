@@ -31,7 +31,7 @@ const insertAluno = async function (dadosAluno) {
 }
 
 const deleteAluno = async function (id) {
-   
+
     let idAluno = id;
 
     //Script para deletar o aluno
@@ -65,7 +65,7 @@ const updateAluno = async function (dadosAluno) {
 }
 
 const selectAllAlunos = async function () {
-    
+
     //SriptSQL para buscar todos os itens no banco de dados
     let sql = 'select * from tbl_aluno';
 
@@ -110,6 +110,34 @@ const selectByNameAluno = async function (name) {
     }
 }
 
+// Retorna Alunos filtrando pelo ID da Turma//PAREI AQUI
+const selectAlunosByIDTurma = async function (idTurma) {
+    let idDaTurma = idTurma
+
+    let sql = ` select
+                tbl_turma.nome as nome_turma, tbl_turma.sigla as sigla_turma,
+                tbl_aluno.nome as nome_aluno, tbl_aluno.email as email_aluno,
+                tbl_matricula.numero as numero_matricula
+                from tbl_matricula
+                    inner join tbl_aluno
+                on tbl_aluno.id = tbl_matricula.id_aluno
+                    inner join tbl_turma
+                on tbl_turma.id = tbl_matricula.id_turma
+                 where tbl_turma.id = ${idDaTurma};`;
+
+    let rs = await prisma.$queryRawUnsafe(sql)
+
+    if (rs.length > 0) {
+        return rs
+    } else {
+        return false;
+    }
+
+
+}
+
+
+
 const selectLastId = async function () {
     let sql = `select * from tbl_aluno order by id desc limit 1;`
 
@@ -129,5 +157,6 @@ module.exports = {
     selectAllAlunos,
     selectAlunoByID,
     selectLastId,
-    selectByNameAluno
+    selectByNameAluno,
+    selectAlunosByIDTurma
 }

@@ -285,7 +285,7 @@ app.put('/v1/mecanica/aluno/:id', cors(), bodyParserJSON, async function (reques
 
         let dadosBody = request.body
 
-        let resultDadosAluno = await controllerAluno.inserirAluno(dadosBody, idAluno)
+        let resultDadosAluno = await controllerAluno.atualizarAluno(dadosBody, idAluno)
 
         response.status(resultDadosAluno.status)
         response.json(resultDadosAluno)
@@ -328,6 +328,19 @@ app.get('/v1/mecanica/aluno', cors(), async function (request, response) {
 
     response.status(dadosAluno.status)
     response.json(dadosAluno)
+});
+
+//EndPoint: Filtragem dos alunos pela turma
+app.get('/v1/mecanica/alunos/turma/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
+
+
+    let idTurma = request.params.idTurma
+
+    let dados = await controllerAluno.getAlunosIDTurma(idTurma)
+
+    response.status(dados.status)
+    response.json(dados)
+
 });
 
 /////////////////////////////////////Matricula//////////////////////////////////////////////
@@ -590,7 +603,6 @@ app.get('/v1/mecanica/cursos', cors(), bodyParserJSON, async function (request, 
     response.json(dadosCurso)
 });
 
-
 //EndPoint: Filtragem das turma pelo curso
 app.get('/v1/mecanica/turma/idCurso/:idCurso', cors(), bodyParserJSON, async function (request, response) {
 
@@ -605,6 +617,20 @@ app.get('/v1/mecanica/turma/idCurso/:idCurso', cors(), bodyParserJSON, async fun
 
 });
 
+//EndPoint: Retorna os alunos e materias da turma especifica
+app.get('/v1/mecanica/alunos/materia/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
+
+
+    let idTurma = request.params.idTurma
+
+    let dados = await controllerTurma.getAlunosMateriasIDTurma(idTurma)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
 //EndPoint: Retorna o curso pelo id
 app.get('/v1/mecanica/curso/id/:id', cors(), bodyParserJSON, async function (request, response) {
 
@@ -615,6 +641,10 @@ app.get('/v1/mecanica/curso/id/:id', cors(), bodyParserJSON, async function (req
     response.status(dadosCurso.status)
     response.json(dadosCurso)
 })
+
+
+
+
 
 /////////////////////////////////////////Turma/////////////////////////////////////////////
 
@@ -893,6 +923,19 @@ app.get('/v1/mecanica/professor', cors(), async function (request, response) {
     response.json(dadosProfessor)
 });
 
+
+//EndPoint: Filtragem dos cursos,turmas e materias daquele professor
+app.get('/v1/mecanica/curso/turma/materia/idProfessor/:idProfessor', cors(), bodyParserJSON, async function (request, response) {
+
+
+    let idProfessor = request.params.idProfessor
+
+    let dados = await controllerCursoTurmaProfessor.getCursosTurmasMateriasIDProfessor(idProfessor)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
 
 
 /////////////////////////////////////////Tipo Tarefas//////////////////////////////////////////////

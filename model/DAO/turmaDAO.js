@@ -93,9 +93,42 @@ const selectTurmaByIDCurso = async function (idCurso) {
         return false;
     }
 
-    
+
 }
 
+
+// Retorna os alunos junto da matricula, e materias filtrando pelo ID da turma
+const selectAlunosMateriasByIDTurma = async function (idTurma) {
+    let idDaTurma = idTurma
+
+    let sql = `
+             select
+             tbl_turma.nome as nome_turma, tbl_turma.sigla as sigla_turma,
+             tbl_aluno.nome as nome_aluno, tbl_aluno.email as email_aluno,
+             tbl_materia.nome as nome_materia, tbl_materia.sigla as sigla_materia,
+             tbl_matricula.numero as numero_matricula
+                from tbl_matricula
+            inner join tbl_aluno
+                on tbl_aluno.id = tbl_matricula.id_aluno
+            inner join tbl_turma
+                on tbl_turma.id = tbl_matricula.id_turma
+             inner join tbl_turma_materia
+                on tbl_turma.id = tbl_turma_materia.id_turma
+            inner join tbl_materia
+                 on tbl_turma_materia.id_materia = tbl_materia.id
+            where tbl_turma.id = ${idDaTurma};
+    `;
+
+    let rs = await prisma.$queryRawUnsafe(sql)
+
+    if (rs.length > 0) {
+        return rs
+    } else {
+        return false;
+    }
+
+
+}
 
 const selectLastId = async function () {
     let sql = `select * from tbl_turma order by id desc limit 1;`
@@ -129,5 +162,6 @@ module.exports = {
     selectAllTurmas,
     selectLastId,
     selectTurmaByID,
-    selectTurmaByIDCurso
+    selectTurmaByIDCurso,
+    selectAlunosMateriasByIDTurma
 }

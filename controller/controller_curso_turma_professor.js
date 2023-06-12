@@ -120,7 +120,7 @@ const getCursoTurmaProfessorID = async function (idCursoTurmaProfessor) {
 }
 
 
-const deletarCursoTurmaProfessor = async function (idCursoTurmaProfessor) { 
+const deletarCursoTurmaProfessor = async function (idCursoTurmaProfessor) {
     let statusId = await cursoTurmaProfessorDAO.selectCursoTurmaProfessorByID(idCursoTurmaProfessor);
 
     if (statusId) {
@@ -142,6 +142,29 @@ const deletarCursoTurmaProfessor = async function (idCursoTurmaProfessor) {
 }
 
 
+const getCursosTurmasMateriasIDProfessor = async (idProfessor) => {
+
+    if (idProfessor == null || idProfessor == undefined || idProfessor == '') {
+        return message.ERROR_INVALID_ID
+    } else {
+
+        let dadosJSON = {}
+
+        let dadosCursosTurmasProfessores = await cursoTurmaProfessorDAO.selectCursoTurmaMateriaByIDProfessor(idProfessor)
+
+        if (dadosCursosTurmasProfessores) {
+
+            dadosJSON.status = message.SUCESS_CREATED_ITEM.status
+            dadosJSON.message = message.SUCESS_REQUEST.message
+            dadosJSON.cursos_turmas_materias_do_professor = dadosCursosTurmasProfessores
+
+            return dadosJSON
+        } else {
+            return message.ERROR_INVALID_ID
+        }
+
+    }
+}
 
 
 
@@ -152,5 +175,6 @@ module.exports = {
     atualizarCursoTurmaDoProfessor,
     getCursoTurmaProfessor,
     getCursoTurmaProfessorID,
-    deletarCursoTurmaProfessor
+    deletarCursoTurmaProfessor,
+    getCursosTurmasMateriasIDProfessor
 }

@@ -160,6 +160,29 @@ const getAlunoPorID = async function (idAluno) {
 
 }
 
+const getAlunosIDTurma = async (idTurma) => {
+
+    if (idTurma == null || idTurma == undefined || idTurma == '') {
+        return message.ERROR_INVALID_ID
+    } else {
+
+        let dadosJSON = {}
+        let dadosAlunoTurma = await alunoDAO.selectAlunosByIDTurma(idTurma)
+
+        if (dadosAlunoTurma) {
+
+            dadosJSON.status = message.SUCESS_CREATED_ITEM.status
+            dadosJSON.message = message.SUCESS_REQUEST.message
+            dadosJSON.alunosDaTurma = dadosAlunoTurma
+
+            return dadosJSON
+        } else {
+            return message.ERROR_INVALID_ID
+        }
+
+    }
+}
+
 
 module.exports = {
     inserirAluno,
@@ -167,5 +190,6 @@ module.exports = {
     deletarAluno,
     getAlunos,
     getAlunoPorID,
-    getBuscarAlunoNome
+    getBuscarAlunoNome,
+    getAlunosIDTurma
 }
