@@ -100,6 +100,36 @@ const deleteRegistroTempo = async function(id) {
     }
 }
 
+// Retorna os registro de tempo de uma tarefa especifica
+const selectRegistroTempoByIDTarefa = async function (idTarefa) {
+    let idDaTarefa = idTarefa
+
+    let sql = ` 
+            select
+            tbl_tarefa.nome as nome_tarefa, tbl_tarefa.numero as numero_tarefa,
+            tbl_tarefa.tempo_previsto as tempo_previsto,
+            tbl_registro_tempo.data as data,
+            tbl_registro_tempo.hora_inicio as hora_inicio,
+            tbl_registro_tempo.hora_termino as hora_termino,
+            tbl_registro_tempo.tempo_intervalo as tempo_intervalo,
+            tbl_registro_tempo.observacao as obsevacao
+            from tbl_tarefa
+            inner join tbl_registro_tempo
+                on tbl_tarefa.id = tbl_registro_tempo.id_tarefa
+            where tbl_tarefa.id = ${idDaTarefa};`
+
+    let rs = await prisma.$queryRawUnsafe(sql)
+
+    if (rs.length > 0) {
+        return rs
+    } else {
+        return false;
+    }
+
+}
+
+
+
 const selectLastId = async function () {
     let sql = `select * from tbl_registro_tempo order by id desc limit 1;`
 
@@ -118,5 +148,6 @@ module.exports = {
     updateRegistroTempo,
     selectRegistroTempoByID,
     selectAllRegistroTempo,
-    deleteRegistroTempo
+    deleteRegistroTempo,
+    selectRegistroTempoByIDTarefa
 }

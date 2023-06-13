@@ -39,7 +39,6 @@ const inserirRegistroTempo = async function (dadosRegistroTempo) {
     }
 }
 
-
 const atualizarRegistroTempo = async function (dadosRegistroTempo, idRegistroTempo) {
 
     if (dadosRegistroTempo.data == '' || dadosRegistroTempo.data == undefined ||
@@ -78,7 +77,6 @@ const atualizarRegistroTempo = async function (dadosRegistroTempo, idRegistroTem
     }
 
 }
-
 
 const getRegistroTempo = async function () {
     let registroJSON = {}
@@ -142,10 +140,34 @@ const deletarRegistroTempo = async function (idRegistro) {
     }
 }
 
+const getRegistrosTempoIDTarefa = async (idTarefa) => {
+
+    if (idTarefa == null || idTarefa == undefined || idTarefa == '') {
+        return message.ERROR_INVALID_ID
+    } else {
+
+        let dadosJSON = {}
+        let dadosTarefa = await registroTempoDAO.selectRegistroTempoByIDTarefa(idTarefa)
+
+        if (dadosTarefa) {
+
+            dadosJSON.status = message.SUCESS_CREATED_ITEM.status
+            dadosJSON.message = message.SUCESS_REQUEST.message
+            dadosJSON.registros_de_tempo_da_tarefa = dadosTarefa
+
+            return dadosJSON
+        } else {
+            return message.ERROR_INVALID_ID
+        }
+
+    }
+}
+
 module.exports = {
     inserirRegistroTempo,
     atualizarRegistroTempo,
     getRegistroTempo,
     getRegistroTempoPorID,
-    deletarRegistroTempo
+    deletarRegistroTempo,
+    getRegistrosTempoIDTarefa
 }

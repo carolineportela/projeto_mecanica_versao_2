@@ -69,33 +69,6 @@ const selectAllMaterias = async function () {
         return false
 }
 
-// Retorna a materia filtrando pela turma
-const selectMateriaByIDTurma = async function (idTurma) {
-    let idMateriaTurma = idTurma
-
-    let sql = ` select materia.id, materia.nome as nome_materia, 
-                    materia.sigla as sigla_materia, 
-                    turma.nome as nome_turma, 
-                    turma.sigla as sigla_turma
-                        from tbl_materia as materia
-                        inner join tbl_turma_materia 
-                            on tbl_turma_materia.id_materia = materia.id
-                        inner join tbl_turma as turma
-                             on tbl_turma_materia.id_turma = turma.id
-                where turma.id = ${idMateriaTurma};`;
-
-    let rs = await prisma.$queryRawUnsafe(sql)
-
-    if (rs.length > 0) {
-        return rs
-    } else {
-        return false;
-    }
-
-
-}
-
-
 const selectLastId = async function () {
     let sql = `select * from tbl_materia order by id desc limit 1;`
 
@@ -122,6 +95,57 @@ const selectMateriaByID = async function (id) {
     }
 }
 
+// Retorna a materia da turma especifica
+const selectMateriaByIDTurma = async function (idTurma) {
+    let idMateriaTurma = idTurma
+
+    let sql = ` select materia.id, materia.nome as nome_materia, 
+                    materia.sigla as sigla_materia, 
+                    turma.nome as nome_turma, 
+                    turma.sigla as sigla_turma
+                        from tbl_materia as materia
+                        inner join tbl_turma_materia 
+                            on tbl_turma_materia.id_materia = materia.id
+                        inner join tbl_turma as turma
+                             on tbl_turma_materia.id_turma = turma.id
+                where turma.id = ${idMateriaTurma};`;
+
+    let rs = await prisma.$queryRawUnsafe(sql)
+
+    if (rs.length > 0) {
+        return rs
+    } else {
+        return false;
+    }
+
+
+}
+
+
+// Retorna as tarefas de uma materia especifica
+const selectTarefaByIDMateria = async function (idMateria) {
+    let idDaMateria = idMateria
+
+    let sql = ` select
+                tbl_materia.nome as nome_materia, tbl_materia.sigla as sigla_materia,
+                 tbl_tarefa.nome as nome_tarefa, tbl_tarefa.numero as numero_tarefa,  
+                 tbl_tarefa.tempo_previsto as tempo_previsto
+                    from tbl_tarefa
+                 inner join tbl_materia_tarefa
+                    on tbl_materia_tarefa.id_tarefa = tbl_tarefa.id
+                inner join tbl_materia
+                    on tbl_materia_tarefa.id_materia = tbl_materia.id
+                where tbl_materia.id = ${idDaMateria};`;
+
+    let rs = await prisma.$queryRawUnsafe(sql)
+
+    if (rs.length > 0) {
+        return rs
+    } else {
+        return false;
+    }
+}
+
 module.exports = {
     insertMateria,
     updateMateria,
@@ -129,5 +153,6 @@ module.exports = {
     selectAllMaterias,
     selectLastId,
     selectMateriaByID,
-    selectMateriaByIDTurma
+    selectMateriaByIDTurma,
+    selectTarefaByIDMateria
 }

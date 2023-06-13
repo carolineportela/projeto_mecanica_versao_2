@@ -152,11 +152,36 @@ const getMateriaIDTurma = async (idTurma) => {
     }
 }
 
+
+const getTarefaIDMateria = async (idMateria) => {
+
+    if (idMateria == null || idMateria == undefined || idMateria == '') {
+        return message.ERROR_INVALID_ID
+    } else {
+
+        let dadosJSON = {}
+        let dadosMateria = await materiaDAO.selectTarefaByIDMateria(idMateria)
+
+        if (dadosMateria) {
+
+            dadosJSON.status = message.SUCESS_CREATED_ITEM.status
+            dadosJSON.message = message.SUCESS_REQUEST.message
+            dadosJSON.tarefas_da_materia = dadosMateria
+
+            return dadosJSON
+        } else {
+            return message.ERROR_INVALID_ID
+        }
+
+    }
+}
+
 module.exports ={
     inserirMateria,
     getMaterias,
     getMateriaPorId,
     atualizarMateria,
     deletarMateria,
-    getMateriaIDTurma  
+    getMateriaIDTurma,
+    getTarefaIDMateria
 }

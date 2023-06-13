@@ -217,7 +217,7 @@ app.get('/v1/mecanica/usuario/id/:id', cors(), bodyParserJSON, async function (r
 })
 
 
-//EndPoint: Retorna o usuario por email e senha
+//EndPoint: Retorna o usuario por email e senha junto com seu tipo usuario
 app.get('/v1/mecanica/usuario/email/:email/senha/:senha', cors(), bodyParserJSON, async function (request, response) {
 
 
@@ -330,18 +330,7 @@ app.get('/v1/mecanica/aluno', cors(), async function (request, response) {
     response.json(dadosAluno)
 });
 
-//EndPoint: Filtragem dos alunos pela turma
-app.get('/v1/mecanica/alunos/turma/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
 
-
-    let idTurma = request.params.idTurma
-
-    let dados = await controllerAluno.getAlunosIDTurma(idTurma)
-
-    response.status(dados.status)
-    response.json(dados)
-
-});
 
 /////////////////////////////////////Matricula//////////////////////////////////////////////
 
@@ -603,32 +592,7 @@ app.get('/v1/mecanica/cursos', cors(), bodyParserJSON, async function (request, 
     response.json(dadosCurso)
 });
 
-//EndPoint: Filtragem das turma pelo curso
-app.get('/v1/mecanica/turma/idCurso/:idCurso', cors(), bodyParserJSON, async function (request, response) {
 
-
-    let idCurso = request.params.idCurso
-
-    //Recebe os dados da controller da turma_materia
-    let dados = await controllerTurma.getTurmasIDCurso(idCurso)
-
-    response.status(dados.status)
-    response.json(dados)
-
-});
-
-//EndPoint: Retorna os alunos e materias da turma especifica
-app.get('/v1/mecanica/alunos/materia/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
-
-
-    let idTurma = request.params.idTurma
-
-    let dados = await controllerTurma.getAlunosMateriasIDTurma(idTurma)
-
-    response.status(dados.status)
-    response.json(dados)
-
-});
 
 
 //EndPoint: Retorna o curso pelo id
@@ -830,21 +794,6 @@ app.delete('/v1/mecanica/turma/materia/:id', cors(), bodyParserJSON, async funct
 });
 
 
-//EndPoint: Filtragem das materia pela turma
-app.get('/v1/mecanica/materia/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
-
-
-    let idTurma = request.params.idTurma
-
-    let dados = await controllerMateria.getMateriaIDTurma(idTurma)
-
-    response.status(dados.status)
-    response.json(dados)
-
-});
-
-
-
 ///////////////////////////////////////Professor///////////////////////////////////////////////////
 
 /********************************
@@ -921,20 +870,6 @@ app.get('/v1/mecanica/professor', cors(), async function (request, response) {
 
     response.status(dadosProfessor.status)
     response.json(dadosProfessor)
-});
-
-
-//EndPoint: Filtragem dos cursos,turmas e materias daquele professor
-app.get('/v1/mecanica/curso/turma/materia/idProfessor/:idProfessor', cors(), bodyParserJSON, async function (request, response) {
-
-
-    let idProfessor = request.params.idProfessor
-
-    let dados = await controllerCursoTurmaProfessor.getCursosTurmasMateriasIDProfessor(idProfessor)
-
-    response.status(dados.status)
-    response.json(dados)
-
 });
 
 
@@ -2178,6 +2113,111 @@ app.delete('/v1/mecanica/curso/turma/professor/:id', cors(), async function (req
     }
 
 });
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                /***************************************
+                                * APIS responsáveis por filtragens
+                                * Data : 13/06/2023
+                                **************************************** */
+
+//EndPoint: Filtragem das turmas pelo curso
+app.get('/v1/mecanica/turma/idCurso/:idCurso', cors(), bodyParserJSON, async function (request, response) {
+
+    let idCurso = request.params.idCurso
+
+    //Recebe os dados da controller da turma_materia
+    let dados = await controllerTurma.getTurmasIDCurso(idCurso)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+//EndPoint: Filtragem das materia pela turma
+app.get('/v1/mecanica/materia/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
+
+    let idTurma = request.params.idTurma
+
+    let dados = await controllerMateria.getMateriaIDTurma(idTurma)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+//EndPoint: Filtragem que retorna os alunos de uma turma especifica
+app.get('/v1/mecanica/alunos/turma/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
+
+
+    let idTurma = request.params.idTurma
+
+    let dados = await controllerAluno.getAlunosIDTurma(idTurma)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+//EndPoint: Filtragem que retorna os alunos pela turma junto das materias da turma.
+//Preciso arrumar essa funcao com for each por causa das materias se repetindo
+app.get('/v1/mecanica/alunos/materia/idTurma/:idTurma', cors(), bodyParserJSON, async function (request, response) {
+
+    let idTurma = request.params.idTurma
+
+    let dados = await controllerTurma.getAlunosMateriasIDTurma(idTurma)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+//EndPoint: Filtragem dos cursos,turmas e materias daquele professor
+//Arrumar essa funcao tbm com for each por causa das materias se repetindo
+app.get('/v1/mecanica/curso/turma/materia/idProfessor/:idProfessor', cors(), bodyParserJSON, async function (request, response) {
+
+
+    let idProfessor = request.params.idProfessor
+
+    let dados = await controllerCursoTurmaProfessor.getCursosTurmasMateriasIDProfessor(idProfessor)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+
+//EndPoint: Filtragem que retorna as tarefas de uma materia especifica.
+app.get('/v1/mecanica/tarefa/materia/idMateria/:idMateria', cors(), bodyParserJSON, async function (request, response) {
+
+    let idMateria= request.params.idMateria
+
+    let dados = await controllerMateria.getTarefaIDMateria(idMateria)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
+//EndPoint: Filtragem que retorna todos os registros de tempo de uma tarefa
+app.get('/v1/mecanica/registro/tempo/tarefa/idTarefa/:idTarefa', cors(), bodyParserJSON, async function (request, response) {
+
+    let idTarefa = request.params.idTarefa
+
+    let dados = await controllerRegistroTempo.getRegistrosTempoIDTarefa(idTarefa)
+
+    response.status(dados.status)
+    response.json(dados)
+
+});
+
 
 
 
