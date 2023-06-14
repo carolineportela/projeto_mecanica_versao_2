@@ -127,7 +127,6 @@ const getTurmas = async function () {
     }
 }
 
-
 const getTurmaPorID = async function (id) {
 
     if (id == '' || id == undefined || isNaN(id)) {
@@ -195,6 +194,44 @@ const getAlunosMateriasIDTurma = async (idTurma) => {
 }
 
 
+const inserirDadosProcidore = async function (dados) {
+
+    let resultDados;
+
+    if (dados.nome_turma == '' || dados.nome_turma == undefined ||
+        dados.sigla_turma == '' || dados.sigla_turma == undefined || 
+        dados.nome_curso  == '' || dados.nome_curso == undefined ||
+        dados.sigla_curso == '' || dados.sigla_curso == undefined ||
+        dados.descricao_curso == '' || dados.descricao_curso == undefined ||
+        dados.carga_horaria_curso == '' || dados.carga_horaria_curso == undefined 
+    ) {
+        console.log(dados);
+        return message.ERROR_REQUIRE_FIELDS
+    } else {
+
+        resultDados = await turmaDAO.insertDaTurmaComProcidore(dados)
+
+        if (resultDados) {
+
+            //Chama a função que vai encontrar o ID gerado após o insert
+            let novoDado = await turmaDAO.selectLastId()
+
+            let dadosJSON = {};
+            dadosJSON.status = message.SUCESS_CREATED_ITEM.status;
+            dadosJSON.message = message.SUCESS_CREATED_ITEM.message;
+            dadosJSON.dados = novoDado
+            
+            return dadosJSON
+        } else {
+            console.log(resultDados);
+            return message.ERROR_INTERNAL_SERVER
+        }
+    }
+}
+
+
+
+
 module.exports = {
     inserirTurma,
     atualizarTurma,
@@ -202,5 +239,6 @@ module.exports = {
     getTurmas,
     getTurmaPorID,
     getTurmasIDCurso,
-    getAlunosMateriasIDTurma
+    getAlunosMateriasIDTurma,
+    inserirDadosProcidore
 }

@@ -2218,7 +2218,26 @@ app.get('/v1/mecanica/registro/tempo/tarefa/idTarefa/:idTarefa', cors(), bodyPar
 
 });
 
+//////////////////////////Procidore //////////////////////////////
 
+//EndPoint: Post - Insere a turma com  o metodo procidore
+app.post('/v1/mecanica/turma/procidore', cors(), bodyParserJSON, async function (request, response) {
+
+    let contentType = request.headers['content-type']
+
+    if (String(contentType).toLowerCase() == 'application/json') {
+        let dadosBody = request.body
+
+        let resulDados = await controllerTurma.inserirDadosProcidore(dadosBody)
+
+        response.status(resulDados.status)
+        response.json(resulDados)
+    } else {
+        response.status(message.ERROR_INVALID_CONTENT_TYPE.status)
+        response.json(message.ERROR_INVALID_CONTENT_TYPE)
+    }
+
+});
 
 
 app.listen(8080, function () {

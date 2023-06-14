@@ -75,7 +75,6 @@ const selectAllTurmas = async function () {
         return false
 }
 
-
 // Retorna  Turma filtrando pelo ID de Curso
 const selectTurmaByIDCurso = async function (idCurso) {
     let idTurmaCurso = idCurso
@@ -155,6 +154,29 @@ const selectTurmaByID = async function (id) {
     }
 }
 
+//Inserindo a turma com store de procedore
+const insertDaTurmaComProcidore = async function (dados) {
+
+    let sql = ` CALL inserir_turma (
+            '${dados.nome_turma}',
+            '${dados.sigla_turma}',
+            '${dados.nome_curso}',
+            '${dados.sigla_curso}',
+            '${dados.descricao_curso}',
+            '${dados.carga_horaria_curso}'
+            );`
+  
+    let rs = await prisma.$queryRawUnsafe(sql);
+
+    if (rs) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
 module.exports = {
     insertTurma,
     deleteTurma,
@@ -163,5 +185,6 @@ module.exports = {
     selectLastId,
     selectTurmaByID,
     selectTurmaByIDCurso,
-    selectAlunosMateriasByIDTurma
+    selectAlunosMateriasByIDTurma,
+    insertDaTurmaComProcidore
 }
