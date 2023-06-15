@@ -29,7 +29,7 @@ const insertTurmaMateria = async function (dadosTurmaMateria) {
 
 }
 
-const updateTurmaMateria = async function(dadosTurmaMateria) {
+const updateTurmaMateria = async function (dadosTurmaMateria) {
     let sql = `update tbl_turma_materia set
                     id_turma = '${dadosTurmaMateria.id_turma}',
                     id_materia = '${dadosTurmaMateria.id_materia}'
@@ -38,15 +38,15 @@ const updateTurmaMateria = async function(dadosTurmaMateria) {
 
     //Executa o scriptSQL no BD
     let resultStatus = await prisma.$executeRawUnsafe(sql);
-      if (resultStatus) {
-          return true;
-      } else {
-          return false;
-      }
+    if (resultStatus) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
-const deleteTurmaMateria = async function(id) {
+const deleteTurmaMateria = async function (id) {
     let idTurmaMateria = id;
 
     let sql = `delete from tbl_turma_materia where id = ${idTurmaMateria}`
@@ -86,16 +86,38 @@ const selectTurmaMateriaByID = async function (id) {
         return false;
     }
 }
-const selectLastId = async function() {
+
+const insertTurmaMateriaComProcedore = async function (dados) {
+
+    let sql = ` CALL insert_turma_materia (
+            '${dados.materia_nome}',
+            '${dados.materia_sigla}',
+             ${dados.turma_id}
+
+            );`
+
+    let rs = await prisma.$queryRawUnsafe(sql);
+
+    if (rs) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+const selectLastId = async function () {
     let sql = `select * from tbl_turma_materia order by id desc limit 1;`
 
     let rsTurmaMateria = await prisma.$queryRawUnsafe(sql)
 
-    if(rsTurmaMateria.length > 0)
+    if (rsTurmaMateria.length > 0)
         return rsTurmaMateria
     else
         return false
 }
+
+
 
 module.exports = {
     selectAllTurmasMaterias,
@@ -103,5 +125,6 @@ module.exports = {
     insertTurmaMateria,
     deleteTurmaMateria,
     selectLastId,
-    updateTurmaMateria
+    updateTurmaMateria,
+    insertTurmaMateriaComProcedore
 }
